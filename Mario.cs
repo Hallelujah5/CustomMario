@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using CustomMario.Map;
 using SplashKitSDK;
 using Rectangle = System.Drawing.Rectangle;
 
@@ -10,34 +11,38 @@ namespace CustomMario
     public class Mario
     {
         Bitmap mIdle, mJump, mMoving, mDuck, currentPose;
-        private Sprite _player;
-        private const int Xspeed = 10;
+        //private Sprite _player;
+        private const int Xspeed = 20;
         private Point2D _location;
         bool _facingRight = true;
-        bool _loaded;
+    
         List<Rectangle> rects;
+        SoundEffect _jumpUp;
+        SoundEffect coinCollect;
+        SoundEffect enemyDmg;
+        SoundEffect up1;
         public Mario(double x, double y)
         {
             //Movements
-            mDuck = SplashKit.LoadBitmap("Duck", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Duckin.png");
+            mDuck = SplashKit.LoadBitmap("Duck", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Duckin4.png");
             mIdle = SplashKit.LoadBitmap("Idle", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Idlingfinal.png");
-            mJump = SplashKit.LoadBitmap("Jump", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Jumpinfinal.png");
-            mMoving = SplashKit.LoadBitmap("Mario", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Walk.png");
+            mJump = SplashKit.LoadBitmap("Jump", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Jumpinfinal4.png");
+            mMoving = SplashKit.LoadBitmap("Mario", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Walk9.png");
+
+            _jumpUp = SplashKit.LoadSoundEffect("SFXup", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXJump.mp3");
+
+            ////animation script
+            //mMoving.SetCellDetails(mMoving.Width / 2, mMoving.Height / 2, 2, 2, 4);
+            //AnimationScript walkingScript = SplashKit.LoadAnimationScript("WalkingScript", "walkingScript.txt");
+            //_player = SplashKit.CreateSprite(mMoving, walkingScript);
 
 
-
-            //animation script
-            mMoving.SetCellDetails(mMoving.Width / 2, mMoving.Height / 2, 2, 2, 4);
-            AnimationScript walkingScript = SplashKit.LoadAnimationScript("WalkingScript", "walkingScript.txt");
-            _player = SplashKit.CreateSprite(mMoving, walkingScript);
-
-            _player.StartAnimation(0);
             currentPose = mIdle;
-
+            //_player.StartAnimation(0);
             _location.X = x;
             _location.Y = y;
 
-            _loaded = true;
+
             Console.WriteLine("Mario loaded successfully!");
 
         }
@@ -53,6 +58,11 @@ namespace CustomMario
             return _location;
         }
 
+        public void debugLocation()
+        {
+            SplashKit.DrawText("X: " + _location.X/75, Color.Black, _location.X +10, _location.Y -30);
+            SplashKit.DrawText("Y: " + _location.Y, Color.Black, _location.X +10, _location.Y -20);
+        }
 
 
 
@@ -63,24 +73,26 @@ namespace CustomMario
         private Rectangle _rectDown;
         private Rectangle _rectLeft;
         private Rectangle _rectRight;
+
         private Rectangle _hitbox;
                 
         public void setHitbox()         //sets the 4 small 1x1 rectangle hitboxes indicating top, bottom, left, right of the character.
         {
                                           //int x, int y, int width, int height
                                           //character bitmap is 80x86
+                                          
+            _rectUp = new Rectangle(Convert.ToInt32(_location.X) + 20, Convert.ToInt32(_location.Y) + 4, 36, 1);
+            _rectDown = new Rectangle(Convert.ToInt32(_location.X) + 20, Convert.ToInt32(_location.Y) + 86, 36, 1);
+            _rectLeft = new Rectangle(Convert.ToInt32(_location.X) + 5, Convert.ToInt32(_location.Y) + 5, 1, 81);
+            _rectRight = new Rectangle(Convert.ToInt32(_location.X) + 65, Convert.ToInt32(_location.Y) + 5, 1, 81);
 
-            _rectUp = new Rectangle();          
-            _rectDown = new Rectangle(Convert.ToInt32(_location.X) + 40, Convert.ToInt32(_location.Y) + 89, 1, 1);
-            _rectLeft = new Rectangle();
-            _rectRight = new Rectangle();
 
             _hitbox = new Rectangle();
 
             //should be handled after genmap.cs
         }
 
-
+        
         //onAir
         public Boolean onAir(List<Rectangle> rects)
         {
@@ -115,9 +127,25 @@ namespace CustomMario
             }
             return false;                //else return false
         }
-        public Rectangle Rect()
+
+
+
+
+        //Check collisions with active blocks (like question blocks)
+        public Boolean collideActiveBlocks(List<Rectangle> rects, Rectangle RECT)     //rects is the list<> rects of the map, RECT is the directional hitbox of the character.
         {
-            return _hitbox;
+
+            foreach (Rectangle rect in rects)
+            {
+
+                if (RECT.IntersectsWith(rect) && rect is QuestionBlock)
+                {
+                    return true;                       //returns true if collide 
+                    
+                }
+
+            }
+            return false;                //else return false
         }
 
 
@@ -176,24 +204,26 @@ namespace CustomMario
         private bool onGround = false;     //false by default 
 
         bool moving ;
-
+        bool ducked;
         public void HandleInput(List<Rectangle> rects)
         {
+            ducked = false;
             moving = false;
             setHitbox();
-            movingLoop();
+            debugLocation();
             //Idle when not jump, not duck, not moving A D
             //Show running animation when A D
-
-
-
-
 
 
             //if (!SplashKit.KeyDown(KeyCode.WKey) && !(SplashKit.KeyDown(KeyCode.SKey)) )
             //{
 
             //}  
+
+            if (collideActiveBlocks(rects, _rectUp))
+            {
+                Console.WriteLine("collision with an active block detected.");
+            }
 
 
             //if (SplashKit.KeyDown(KeyCode.WKey) && (SplashKit.KeyDown(KeyCode.SKey)))
@@ -211,10 +241,12 @@ namespace CustomMario
 
             //set current pose for character 
 
-            if (!moving && !onAir(rects))       //if not moving and not mid-air then idle pose
+            if (!moving && !onAir(rects) && !ducked)       //if not ducking, moving and not mid-air then idle pose
             {
                 currentPose = mIdle;        
             }
+            
+
 
 
             if (onAir(rects) && xVelocity > 0)      //represents the player's horizontal velocity while airborne
@@ -240,9 +272,32 @@ namespace CustomMario
             }
 
 
-            //Jumping
-            if (SplashKit.KeyDown(KeyCode.WKey) && !onAir(rects) && !Collision(rects, _rectUp) )        //if press W, is on ground, and doesn't collide with ceiling, then Jump
+            //Moving left and right
+            if (!ducked)
             {
+                if (SplashKit.KeyDown(KeyCode.DKey) && !Collision(rects, _rectRight))       //if press D and no collision on right hitbox
+                {
+                    moving = true;
+                    _facingRight = true;
+                    if (!onAir(rects)) { currentPose = mMoving; }    //since jumping will display the jump bitmap.
+                    double distance = AntiGlitch(rects, _rectRight, Xspeed, 0);
+                    _location.X += distance;
+                }
+                else if (SplashKit.KeyDown(KeyCode.AKey) && !Collision(rects, _rectLeft))
+                {
+                    moving = true;
+                    _facingRight = false;
+                    if (!onAir(rects)) { currentPose = mMoving; }
+                    double distance = AntiGlitch(rects, _rectLeft, -Xspeed, 0);
+                    _location.X += distance;
+                }
+            }
+
+            //Jumping
+            if (SplashKit.KeyDown(KeyCode.WKey) && !onAir(rects) && !Collision(rects, _rectUp) && !ducked)        //if press W, is on ground, not ducking and doesn't collide with ceiling, then Jump
+            {
+                SplashKit.PlaySoundEffect(_jumpUp);
+                moving = true;
                 yVelocity -= 25;
                 currentPose = mJump;
             }
@@ -250,13 +305,14 @@ namespace CustomMario
             //jumping up
             if (yVelocity < 0)      //negative indicates going up
             {
+                moving = true;
                 yVelocity += gravityVlc;     //incrementing the Y velocity to ensure the player slow down as they reach the peak of their jump.
                 if (Math.Abs(yVelocity) > 30)
                 {
                     yVelocity = yVelocity < 0 ? -30 : 30;           //cap the maximum falling/jumping velocity to 50.
                 }
                 double speed = AntiGlitch(rects, _rectUp, 0, yVelocity);        //calculates safe distance
-                _location.Y += speed;
+                _location.Y += speed;   
                 if (speed == 0)     //speed = 0 indicate collision with ceiling
                 {
                     yVelocity = 0;      //stops going up immediately
@@ -265,7 +321,8 @@ namespace CustomMario
             //falling down
             if (yVelocity >= 0 && onAir(rects))
             {
-                yVelocity += gravityVlc;            //faster falling speed as the player is falling
+                moving = true;
+                yVelocity += gravityVlc;            //faster falling speed as the player is falling 
 
                 if (Math.Abs(yVelocity) > 30)
                 {
@@ -274,33 +331,31 @@ namespace CustomMario
                 double speed = AntiGlitch(rects, _rectDown, 0, yVelocity);
                 _location.Y += speed;
                 if (speed == 0)     //indicate ground collision
-                {
+                { 
                     yVelocity = 0;      //stops falling
                 }
-            }
+            }   
 
 
-            //Moving left and right
-            if (SplashKit.KeyDown(KeyCode.DKey) && !Collision(rects,_rectRight) )       //if press D and no collision on right hitbox
-            {
-                moving = true;
-                _facingRight = true;
-                if (!onAir(rects)) { _player.StartAnimation("WalkRight"); _player.UpdateAnimation(); }    //since jumping will display the jump bitmap.
-                double distance = AntiGlitch(rects, _rectRight, Xspeed, 0);
-                _location.X += distance;
-            }
-            else if(SplashKit.KeyDown(KeyCode.AKey) &&!Collision(rects, _rectLeft))
-            {
-                moving = true;
-                _facingRight = false;
-                if (!onAir(rects)) { _player.StartAnimation("WalkLeft"); _player.UpdateAnimation(); }
-                double distance = AntiGlitch(rects,_rectLeft, -Xspeed, 0);
-                _location.X += distance;
-            }
-
-           
 
             //Duck
+            if (SplashKit.KeyDown(KeyCode.SKey) && !onAir(rects) && !moving)           //if on ground and press S
+            {
+                ducked = true;
+                currentPose = mDuck;
+            }
+
+
+            //Falling off the map
+            if (_location.Y > 700)
+            {
+                    Console.WriteLine("Mario has fallen off the map!");
+                    _location.X = 50;
+                    _location.Y = 50;
+                
+            }
+
+ 
 
 
 
@@ -338,21 +393,8 @@ namespace CustomMario
             //    onGround = false;
             //    currentPose = mJump;
             //}
+            Draw(currentPose, _facingRight);
         }
-
-
-        public void movingLoop()
-        {
-            if (SplashKit.KeyTyped(KeyCode.AKey)) { _player.StartAnimation("WalkLeft"); }
-            if (SplashKit.KeyTyped(KeyCode.DKey)) { _player.StartAnimation("WalkRight"); }
-            else
-            {
-                Draw(currentPose, _facingRight);
-            }
-        }
-
-
-
 
 
 

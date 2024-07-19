@@ -11,10 +11,9 @@ namespace CustomMario
     {
         public static void Main()
         {
-            Window TestWin = new Window("Mario Testing", 1100, 700);
+            Window TestWin = new Window("Mario Testing", 1200, 800);
             bool choice = false;
             Game newGame = new Game();
-
             do
             {
                 SplashKit.ProcessEvents();
@@ -22,7 +21,7 @@ namespace CustomMario
                 switch (choice)
                 {
                     case false:
-                        //newGame.Menu_main(TestWin, opts);
+                        
                         if (SplashKit.KeyDown(KeyCode.RKey))
                         {
                             choice = true;

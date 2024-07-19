@@ -15183,7 +15183,12 @@ namespace SplashKitSDK
       __skreturn = __sklib__window_y__window(__skparam__wnd);
       return __skadapter__to_int(__skreturn);
     }
-  }
+
+        internal static void FillRectangle(Color red, System.Drawing.Rectangle rectUp)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     public enum KeyCode
   {
