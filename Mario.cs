@@ -10,7 +10,7 @@ namespace CustomMario
 {
     public class Mario
     {
-        Bitmap mIdle, mJump, mMoving, mDuck, currentPose;
+        Bitmap mIdle, mJump, mMoving, mDuck, mDie, mVictory,currentPose;
         //private Sprite _player;
         private const int Xspeed = 20;
         private Point2D _location;
@@ -21,14 +21,19 @@ namespace CustomMario
         SoundEffect coinCollect;
         SoundEffect enemyDmg;
         SoundEffect up1;
+
         public Mario(double x, double y)
         {
             //Movements
-            mDuck = SplashKit.LoadBitmap("Duck", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Duckin4.png");
-            mIdle = SplashKit.LoadBitmap("Idle", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Idlingfinal.png");
-            mJump = SplashKit.LoadBitmap("Jump", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Jumpinfinal4.png");
-            mMoving = SplashKit.LoadBitmap("Mario", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Walk9.png");
+            mDuck = SplashKit.LoadBitmap("Duck", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Duckin4.png");          //64x86
+            mIdle = SplashKit.LoadBitmap("Idle", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Idlingfinal.png");     //77x86
+            mJump = SplashKit.LoadBitmap("Jump", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Jumpinfinal4.png");   //85x92
+            mMoving = SplashKit.LoadBitmap("Mario", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Walk9.png");      //64x82
+            mVictory = SplashKit.LoadBitmap("victoryPose", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\victory4.png");    //65x86
+            mDie = SplashKit.LoadBitmap("diePose", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\die2.png");     //58x87
 
+
+            //SFX
             _jumpUp = SplashKit.LoadSoundEffect("SFXup", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXJump.mp3");
 
             ////animation script
@@ -65,9 +70,6 @@ namespace CustomMario
         }
 
 
-
-
-
         //Hitboxes
         private Rectangle _rectUp;
         private Rectangle _rectDown;
@@ -81,17 +83,29 @@ namespace CustomMario
                                           //int x, int y, int width, int height
                                           //character bitmap is 80x86
                                           
-            _rectUp = new Rectangle(Convert.ToInt32(_location.X) + 20, Convert.ToInt32(_location.Y) + 4, 36, 1);
+            _rectUp = new Rectangle(Convert.ToInt32(_location.X) + 20, Convert.ToInt32(_location.Y) + 4, 36, 2);
             _rectDown = new Rectangle(Convert.ToInt32(_location.X) + 20, Convert.ToInt32(_location.Y) + 86, 36, 1);
             _rectLeft = new Rectangle(Convert.ToInt32(_location.X) + 5, Convert.ToInt32(_location.Y) + 5, 1, 81);
             _rectRight = new Rectangle(Convert.ToInt32(_location.X) + 65, Convert.ToInt32(_location.Y) + 5, 1, 81);
-
-
-            _hitbox = new Rectangle();
-
             //should be handled after genmap.cs
+
+            _hitbox = new Rectangle(Convert.ToInt32(_location.X) + 10, Convert.ToInt32(_location.Y) + 4, 52, 80);
+
+            SplashKit.DrawRectangle(Color.Red, _rectUp.X, _rectUp.Y, _rectUp.Width, _rectUp.Height);
+            SplashKit.DrawRectangle(Color.Green, _rectDown.X, _rectDown.Y, _rectDown.Width, _rectDown.Height);
+            SplashKit.DrawRectangle(Color.Blue, _rectLeft.X, _rectLeft.Y, _rectLeft.Width, _rectLeft.Height);
+            SplashKit.DrawRectangle(Color.Yellow, _rectRight.X, _rectRight.Y, _rectRight.Width, _rectRight.Height);
+            SplashKit.DrawRectangle(Color.Purple, _hitbox.X, _hitbox.Y, _hitbox.Width, _hitbox.Height);
+        }
+        public Rectangle getHitbox()
+        {
+            return _hitbox;
         }
 
+        public Rectangle getRectdown()
+        {
+            return _rectDown;
+        }
         
         //onAir
         public Boolean onAir(List<Rectangle> rects)
@@ -355,7 +369,11 @@ namespace CustomMario
                 
             }
 
- 
+            if (_location.X > 13500 && _location.X < 13725 && _location.Y > 500)
+            {
+                currentPose = mVictory;
+
+            }
 
 
 
@@ -363,37 +381,48 @@ namespace CustomMario
 
 
 
-            ////Animation update
-            //if (SplashKit.KeyTyped(KeyCode.DKey))
-            //{
-            //    _player.StartAnimation("WalkRight");        //Right
-            //}
-            //if (SplashKit.KeyTyped(KeyCode.AKey))
-            //{
-            //    _player.StartAnimation("WalkLeft");         //Left
-            //}
-            //if (SplashKit.KeyDown(KeyCode.SKey))
-            //{
-            //    currentPose = mDuck;            //Duck
-            //}
+                ////Animation update
+                //if (SplashKit.KeyTyped(KeyCode.DKey))
+                //{
+                //    _player.StartAnimation("WalkRight");        //Right
+                //}
+                //if (SplashKit.KeyTyped(KeyCode.AKey))
+                //{
+                //    _player.StartAnimation("WalkLeft");         //Left
+                //}
+                //if (SplashKit.KeyDown(KeyCode.SKey))
+                //{
+                //    currentPose = mDuck;            //Duck
+                //}
 
-            ////Speed
-            //if (SplashKit.KeyDown(KeyCode.DKey))
-            //{
-            //    _player.X += XSpeed;
-            //}
-            //if (SplashKit.KeyDown(KeyCode.AKey))
-            //{
-            //    _player.X -= XSpeed;
-            //}
+                ////Speed
+                //if (SplashKit.KeyDown(KeyCode.DKey))
+                //{
+                //    _player.X += XSpeed;
+                //}
+                //if (SplashKit.KeyDown(KeyCode.AKey))
+                //{
+                //    _player.X -= XSpeed;
+                //}
 
-            //if (SplashKit.KeyTyped(KeyCode.WKey) && onGround)         //Jump
-            //{
-            //    yVelocity = jumpSpeed;
-            //    onGround = false;
-            //    currentPose = mJump;
-            //}
-            Draw(currentPose, _facingRight);
+                //if (SplashKit.KeyTyped(KeyCode.WKey) && onGround)         //Jump
+                //{
+                //    yVelocity = jumpSpeed;
+                //    onGround = false;
+                //    currentPose = mJump;
+                //}
+                Draw(currentPose, _facingRight);
+        }
+
+        //Victory state
+
+        public void Winning()
+        {
+            currentPose = mVictory;
+
+
+          
+
         }
 
 
@@ -411,5 +440,10 @@ namespace CustomMario
                 SplashKit.DrawBitmap(mario, _location.X, _location.Y, SplashKit.OptionFlipY());
             }
         }
+
+
+
+
+
     }
 }

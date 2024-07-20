@@ -14,6 +14,7 @@ namespace CustomMario
             Window TestWin = new Window("Mario Testing", 1200, 800);
             bool choice = false;
             Game newGame = new Game();
+            Menu newMenu = new Menu();
             do
             {
                 SplashKit.ProcessEvents();
@@ -21,10 +22,11 @@ namespace CustomMario
                 switch (choice)
                 {
                     case false:
-                        
+                        newMenu.Main_menu(TestWin);
                         if (SplashKit.KeyDown(KeyCode.RKey))
                         {
                             choice = true;
+                            newMenu.Stop();
                         }
                         break;
                     case true:

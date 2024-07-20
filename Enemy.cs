@@ -11,85 +11,41 @@ using System.Xml;
 
 namespace CustomMario
 {       
-    public class Goomba
+
+    public class Enemies
     {
-        Bitmap _moving;
-        const int speed = 7;
-        Point2D _location;
-        private Rectangle _rectUp;
-        private Rectangle _rectDown;
-        private Rectangle _rectLeft;
-        private Rectangle _rectRight;
-
-        public Goomba(double x, double y)
+        List<Enemy> _enemies;
+        public Enemies()
         {
-            _moving = new Bitmap("goombaMove", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\goomba.png");  
-
-            _location.X = x * 75;
-            _location.Y = y;
-       
+            _enemies = new List<Enemy>();
         }
 
-
-
-        public Boolean onAir(List<Rectangle> rects)
+        public void Add(Enemy _enemy)
         {
-
-            foreach (Rectangle rect in rects)
+            _enemies.Add(_enemy); // add all the enemies into a list and Draw all of them
+        }
+        public List<Enemy> GetEnemylist()
+        {
+            return _enemies;
+        }
+        public void Draw(List<Rectangle> rects, Rectangle Mario_hitbox)
+        {
+            for (int i = 0; i < _enemies.Count; i++)
             {
-
-                if (_rectDown.IntersectsWith(rect))         //if bottom hitbox intersects with the terrain tiles, it means is on the ground.
-                {
-                    return false;
-                }
+                Enemy _enemy = _enemies[i];
+                _enemy.Moving(rects, Mario_hitbox);
 
             }
-            return true;            //else is on air
         }
 
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //Goomba has a hitbox.
-        //When it touches a player, the player dies.
-        //Moves backwards when collide with a wall/a cliff
-
-
-        public void setHitbox()
-        {
-            _rectUp = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 60, 1);
-            _rectDown = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y) + 60, 60, 1);
-            _rectLeft = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 1, 60);
-            _rectRight = new Rectangle(Convert.ToInt32(_location.X)+60, Convert.ToInt32(_location.Y), 1, 60);
-        }
-
-        public Point2D getLocation()
-        {
-            return _location;
-        }
-
-
-        public void debugLocation()
-        {
-            SplashKit.DrawText("X: " + _location.X / 75, Color.Black, _location.X + 10, _location.Y - 30);
-            SplashKit.DrawText("Y: " + _location.Y, Color.Black, _location.X + 10, _location.Y - 20);
-        }
-
-        // Check collision with platforms
+    public abstract class Enemy
+    {
+        public abstract void Draw();
+        public abstract void setHitbox();
+        public abstract void Moving(List<Rectangle> rects, Rectangle Mario_hitbox);
         public Boolean Collision(List<Rectangle> rects, Rectangle RECT)     //rects is the list<> rects of the map, RECT is the directional hitbox of the character.
         {
 
@@ -148,17 +104,85 @@ namespace CustomMario
         }
 
 
+    }
+    public class Goomba : Enemy
+    {
+        public Bitmap _moving;
+        const int speed = 7;
+        Point2D _location;
+        private Rectangle _rectUp;
+        private Rectangle _rectDown;
+        private Rectangle _rectLeft;
+        private Rectangle _rectRight;
+
+        private Rectangle _hitbox;
+
+        public Goomba(double x, double y)
+        {
+            _moving = new Bitmap("goombaMove", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\goomba.png");  
+
+            _location.X = x * 75;
+            _location.Y = y;
+       
+        }
+
+        public Boolean onAir(List<Rectangle> rects)
+        {
+
+            foreach (Rectangle rect in rects)
+            {
+
+                if (_rectDown.IntersectsWith(rect))         //if bottom hitbox intersects with the terrain tiles, it means is on the ground.
+                {
+                    return false;
+                }
+
+            }
+            return true;            //else is on air
+        }
+
+        //Goomba has a hitbox.
+        //When it touches a player, the player dies.
+        //Moves backwards when collide with a wall/a cliff
+
+
+        public override void setHitbox()
+        {
+            _rectUp = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 60, 1);
+            _rectDown = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y) + 60, 60, 1);
+            _rectLeft = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 1, 60);
+            _rectRight = new Rectangle(Convert.ToInt32(_location.X)+60, Convert.ToInt32(_location.Y), 1, 60);
+
+            _hitbox = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y),60, 57);
+
+            SplashKit.DrawRectangle(Color.Red, _rectUp.X, _rectUp.Y, _rectUp.Width, _rectUp.Height);
+            SplashKit.DrawRectangle(Color.Green, _rectDown.X, _rectDown.Y, _rectDown.Width, _rectDown.Height);
+            SplashKit.DrawRectangle(Color.Blue, _rectLeft.X, _rectLeft.Y, _rectLeft.Width, _rectLeft.Height);
+            SplashKit.DrawRectangle(Color.Yellow, _rectRight.X, _rectRight.Y, _rectRight.Width, _rectRight.Height);
+
+            SplashKit.DrawRectangle(Color.Purple, _hitbox.X, _hitbox.Y, _hitbox.Width, _hitbox.Height);
+        }
+
+        public void debugLocation()
+        {
+            SplashKit.DrawText("X: " + _location.X / 75, Color.Black, _location.X + 10, _location.Y - 30);
+            SplashKit.DrawText("Y: " + _location.Y, Color.Black, _location.X + 10, _location.Y - 20);
+        }
+
+        // Check collision with platforms
+
+
             
         float yVelocity = 0;
         bool moving;
         float gravityVlc = 1;
         bool _movingRight = true;
-        public void Moving(List<Rectangle> rects)
+        public override void Moving(List<Rectangle> rects, Rectangle Mario_hitbox)
         {
             setHitbox();
             debugLocation();
 
-            if (_movingRight)
+            if (_movingRight)                       //Patrolling behaviour
             {
                 if (Collision(rects, _rectRight))
                 {
@@ -184,13 +208,7 @@ namespace CustomMario
 
             }
 
-
-
-
-
-
-
-                if (yVelocity >= 0 && onAir(rects))
+            if (yVelocity >= 0 && onAir(rects))
             {
                 moving = true;
                 yVelocity += gravityVlc;            //faster falling speed as the player is falling 
@@ -211,14 +229,25 @@ namespace CustomMario
 
 
 
+            //Logics check for Goomba collision with Mario
+            //Minus one life or game over
+            if (_hitbox.IntersectsWith(Mario_hitbox))
+            {
+                Console.WriteLine("Mario");
+            }
 
-            Draw(_moving);
+
+
+
+
+
+            Draw();
         }
 
 
-        public void Draw(Bitmap goomba)
+        public override void Draw()
         {
-            SplashKit.DrawBitmap(goomba, _location.X, _location.Y); 
+            SplashKit.DrawBitmap(_moving, _location.X, _location.Y); 
         }
 
 

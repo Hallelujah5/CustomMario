@@ -268,7 +268,7 @@ namespace CustomMario.Map
                 if (i == 16 || i == 35 || i == 60 || i == 67 || i == 85 || i == 107 || i==130 || i ==164)
                 {
                     Bush _bush = new Bush(75 * i, 590);         //small bush
-                    SplashKit.DrawText("i:  " + i, Color.Black, 75* i , 330 );
+                 
                 }
 
 
@@ -276,13 +276,13 @@ namespace CustomMario.Map
                 if (i == 6 || i == 25 || i == 40 || i == 53 || i == 78 || i == 90 || i == 96 || i == 114 || i == 136 || i == 171) 
                 {
                     Bush2 _bush2 = new Bush2(75 * i, 568);      //big bush
-                    SplashKit.DrawText("i:  " + i, Color.Black, 75 * i, 330);
+                
                 }
 
 
 
                 //Pipes
-                if (i == 20 || i == 38 || i == 50 || i == 65 || i == 82 || i == 94 || i == 118 || i == 143) { Pipe _pipe = new Pipe(75*i,498); map.Add(_pipe); SplashKit.DrawText("i:  " + i, Color.Black, 75 * i, 330); }
+                if (i == 20 || i == 38 || i == 50 || i == 65 || i == 82 || i == 94 || i == 118 || i == 143) { Pipe _pipe = new Pipe(75*i,498); map.Add(_pipe);  }
             }
 
 
