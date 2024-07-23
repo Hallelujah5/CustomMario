@@ -16,15 +16,24 @@ namespace CustomMario
     public class GC_List
     {
         List<GameCharacter> _gcList;
+        SoundEffect SFXGoomba;
+        SoundEffect SFXGoombaHit;
         public GC_List()
         {
             _gcList = new List<GameCharacter>();
+            SFXGoomba = SplashKit.LoadSoundEffect("GoombaDies", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXgoomba.mp3");
+            SFXGoombaHit = SplashKit.LoadSoundEffect("GoombaHit", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXGoombaHit.mp3");
         }
 
         public void Add(GameCharacter _entity)
         {
             _gcList.Add(_entity); // add all the enemies into a list and Draw all of them
         }
+        public void Remove(GameCharacter _entity)
+        {
+            _gcList.Remove(_entity);
+        }
+
         public List<GameCharacter> Get_gcList()
         {
             return _gcList;
@@ -37,21 +46,55 @@ namespace CustomMario
                 _entity.Moving(rects, Mario_hitbox, Mario_rectDown, lives);
             }
         }
-        public int Lives(List<Rectangle> rects, Rectangle Mario_hitbox, Rectangle Mario_rectDown, ref int lives)
+        public int Lives(List<Rectangle> rects, Rectangle Mario_hitbox, Rectangle Mario_rectDown, ref int lives)        //uses collision checks to minus or add a life
         {
             for (int i = 0; i < _gcList.Count; i++)
             {
                 GameCharacter _entity = _gcList[i];
-                if (_entity.CheckCollision(Mario_hitbox, lives)) 
+                if (_entity is Mushroom)
                 {
-                    return _entity.Lives(lives); 
+                    if (_entity.CheckCollision(Mario_hitbox))          //also removes it from the screen after being absorbed
+                    {
+                        _gcList.Remove(_entity);
+                        return _entity.Lives(lives);        //+1 life
+                    }
+                }
+
+
+                if (_entity is Goomba)
+                {
+                    if (_entity.CheckCollision(Mario_rectDown))         //if Mario jumps on it, it will get squished and dies
+                    {
+                        SplashKit.PlaySoundEffect(SFXGoomba);
+                        _gcList.Remove(_entity);
+                    }
+                    if (_entity.CheckCollision(Mario_hitbox))           //Other wise damage him
+                    {
+                        SplashKit.PlaySoundEffect(SFXGoombaHit);
+                        return _entity.Lives(lives);        //-1 life
+                    }   
                 }
             }
             return 0;
             
         }
    
-
+        public int Coins(Rectangle Mario_hitbox)
+        {
+            for (int i = 0; i < _gcList.Count; i++)
+            {
+                GameCharacter _entity = _gcList[i];
+                if (_entity is Coin)
+                {
+                    if (_entity.CheckCollision(Mario_hitbox))           
+                    {
+                        _gcList.Remove(_entity);
+                        return 1;
+                    }
+                }
+            }
+            return 0;
+        }
 
     }
 
@@ -116,13 +159,14 @@ namespace CustomMario
             }
             return length;
         }
-        public abstract bool CheckCollision(Rectangle Mario_hitbox, int lives);
+        public abstract bool CheckCollision(Rectangle Mario_hitbox);
         public abstract int Lives(int lives);
     }
     public class Goomba : GameCharacter
     {
         public Bitmap _moving;
-        const int speed = 7;
+        const int speed = 6;
+
         Point2D _location;
         private Rectangle _rectUp;
         private Rectangle _rectDown;
@@ -137,7 +181,9 @@ namespace CustomMario
 
             _location.X = x * 75;
             _location.Y = y;
-       
+    
+
+
         }
 
         public Boolean onAir(List<Rectangle> rects)
@@ -258,13 +304,14 @@ namespace CustomMario
             Console.WriteLine("Lost a life!");
             return -1;
         }
-        public override bool CheckCollision(Rectangle Mario_hitbox, int lives)
+        public override bool CheckCollision(Rectangle Mario_hitbox)
         {
             if (_hitbox.IntersectsWith(Mario_hitbox) && !_iframe)
             {
                 Console.WriteLine(" Goomba ");
                 _iframe = true;
                 _iframeStart = DateTime.Now;
+           
                 return true;
             }
             if (_iframe && (DateTime.Now - _iframeStart).TotalMilliseconds >= iframeDuration)           //Mario will have 1 second invincibiliy timer before he takes dmg from the same Goomba again
@@ -299,12 +346,15 @@ namespace CustomMario
 
         private Rectangle _hitbox;
 
+        SoundEffect _1up;
+
 
         public Mushroom(double x, double y)
         {
             mushroom = new Bitmap("mushroom", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\mushroom2.png");
             _location.X = x;
             _location.Y = y;
+            _1up = SplashKit.LoadSoundEffect("1Up", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFX1up.mp3");
         }
 
 
@@ -411,14 +461,12 @@ namespace CustomMario
         }
 
 
-        public override bool CheckCollision(Rectangle Mario_hitbox, int lives)
+        public override bool CheckCollision(Rectangle Mario_hitbox)
         {
             if (_hitbox.IntersectsWith(Mario_hitbox) && !_iframe)
             {
-                Console.WriteLine(" Mushroom ");
                 _iframe = true;
                 _iframeStart = DateTime.Now;
-                lives -= 1;
                 return true;
             }
             if (_iframe && (DateTime.Now - _iframeStart).TotalMilliseconds >= iframeDuration)           //Mario will have 1 second invincibiliy timer before he takes dmg from the same Goomba again
@@ -432,20 +480,134 @@ namespace CustomMario
         public override int Lives(int lives)
         {
             Console.WriteLine("Gained a life");
+            SplashKit.PlaySoundEffect(_1up);
             return 1;
         }
-
-
-
-
-
-
 
         public override void Draw()
         {
             SplashKit.DrawBitmap(mushroom, _location.X, _location.Y);
         }
 
+    }
+
+
+
+
+
+
+
+
+    public class Coin : GameCharacter
+    {
+        Bitmap _coin;
+        Point2D _location;
+
+        const int speed = 0;
+        private Rectangle _rectUp;
+        private Rectangle _rectDown;
+        private Rectangle _rectLeft;
+        private Rectangle _rectRight;
+
+        private Rectangle _hitbox;
+
+        SoundEffect coinSFX;
+
+
+        public Coin(double x, double y)
+        {
+            _coin = new Bitmap("Coinsss", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\coin4.png");
+            _location.X = x * 60;
+            _location.Y = y;
+            coinSFX = SplashKit.LoadSoundEffect("Coin", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXcoin.mp3");
+        }
+
+
+        public override void setHitbox()
+        {
+            _rectUp = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 48, 1);
+            _rectDown = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y) + 48, 48, 1);
+            _rectLeft = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 1, 48);
+            _rectRight = new Rectangle(Convert.ToInt32(_location.X) + 48, Convert.ToInt32(_location.Y), 1, 48);
+
+            _hitbox = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 48, 48);
+
+
+        }
+
+        bool _movingRight = true;
+
+
+        public Boolean onAir(List<Rectangle> rects)
+        {
+
+            foreach (Rectangle rect in rects)
+            {
+
+                if (_rectDown.IntersectsWith(rect))         //if bottom hitbox intersects with the terrain tiles, it means is on the ground.
+                {
+                    return false;
+                }
+
+            }
+            return true;            //else is on air
+        }
+
+        public override void Moving(List<Rectangle> rects, Rectangle Mario_hitbox, Rectangle mario_rectDown, int lives)
+        {
+            setHitbox();
+         
+
+            if (_movingRight)                       //Patrolling behaviour
+            {
+                if (Collision(rects, _rectRight))
+                {
+                    _movingRight = false; // Switch direction    
+                }
+                else
+                {
+                    double distance = AntiGlitch(rects, _rectRight, -speed, 0);
+                    _location.X -= distance;
+                }
+            }
+            else
+            {
+                if (Collision(rects, _rectLeft))
+                {
+                    _movingRight = true;  //moves right 
+                }
+                else
+                {
+                    double distance = AntiGlitch(rects, _rectLeft, speed, 0);
+                    _location.X -= distance;
+                }
+
+            }
+
+
+            Draw();
+        }
+
+
+        public override bool CheckCollision(Rectangle Mario_hitbox)
+        {
+            if (_hitbox.IntersectsWith(Mario_hitbox))
+            {
+                SplashKit.PlaySoundEffect(coinSFX);
+                return true;
+            }
+            return false;
+        }
+
+        public override int Lives(int lives)
+        {
+            return 0;
+        }
+        public override void Draw()
+        {
+            SplashKit.DrawBitmap(_coin, _location.X, _location.Y);
+        }
 
     }
 }
+    

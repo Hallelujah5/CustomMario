@@ -7,6 +7,7 @@ using CustomMario.Map;
 using SplashKitSDK;
 using Rectangle = System.Drawing.Rectangle;
 using System.Threading;
+using System.Diagnostics;
 
 namespace CustomMario
 {
@@ -25,7 +26,7 @@ namespace CustomMario
         SoundEffect _bgMusic;
         Bitmap HUDmario, Time, Coin;
         Font font;
-        int lives, countdownTimer, _lifeUpdate;
+        int lives, countdownTimer, _lifeUpdate, totalCoins, _coinAdd;
         SplashKitSDK.Timer gameTimer;
         Goomba _goomba1, _goomba2, _goomba3, _goomba4, _goomba5, _goomba6, _goomba7, _goomba8, _goomba9;
         bool m1, m2, m3, m4;
@@ -33,13 +34,14 @@ namespace CustomMario
         bool _pause;
         bool _victory;
         bool _courseEnded;
-        SoundEffect VictorySFX, LifeLostSFX;
+        SoundEffect VictorySFX, LifeLostSFX, powerUpAppearSFX;
         bool _dies;
+        Coin coin1,coin2,coin3,coin4,coin5,coin6, coin7, coin8, coin9, coin10, coin11, coin12, coin13, coin14, coin15, coin16, coin17, coin18, coin19, coin20;
 
         public void Load()
         {
             map = new DrawMap();
-            player = new Mario(50, 50);
+            player = new Mario(1450, 50);
             bgImage = new Bitmap("Bg", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\background2.png");
 
             _point = new Point2D();
@@ -56,9 +58,10 @@ namespace CustomMario
             //SFX
             VictorySFX = SplashKit.LoadSoundEffect("Victory", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\clearcourse.mp3");
             LifeLostSFX = SplashKit.LoadSoundEffect("GameOver", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\lifelost.mp3");
-
+            powerUpAppearSFX = SplashKit.LoadSoundEffect("PowerUpAppear", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFX1upAppear.mp3");
 
             lives = 1;
+            totalCoins = 0;
             countdownTimer = 100;
             gameTimer = SplashKit.CreateTimer("Timer");
             SplashKit.StartTimer(gameTimer);
@@ -88,6 +91,47 @@ namespace CustomMario
             _gcList.Add(_goomba7);
             _gcList.Add(_goomba8);
 
+            coin2 = new Coin(32, 560);          //Y 560 is the ground level
+            coin3 = new Coin(29, 560);
+            coin4 = new Coin(30, 560);
+            coin5 = new Coin(31, 560);
+
+            coin6 = new Coin(35, 150);
+            coin7 = new Coin(36, 75);
+            coin8 = new Coin(37, 0);
+            coin9 = new Coin(38, -20);
+
+
+            coin10 = new Coin(59, 560);
+            coin11 = new Coin(56, 560);
+            coin12 = new Coin(57, 560);
+            coin13 = new Coin(58, 560);
+
+            coin14 = new Coin(73, 560);
+            coin15 = new Coin(71, 560);
+            coin16 = new Coin(72, 560);
+
+            coin17 = new Coin(73, -6);
+            coin18 = new Coin(72, -6);
+
+         
+            _gcList.Add(coin2);
+            _gcList.Add(coin3);
+            _gcList.Add(coin4);
+            _gcList.Add(coin5);
+            _gcList.Add(coin6);
+            _gcList.Add(coin7);
+            _gcList.Add(coin8);
+            _gcList.Add(coin9);
+            _gcList.Add(coin10);
+            _gcList.Add(coin11);
+            _gcList.Add(coin12);
+            _gcList.Add(coin13);
+            _gcList.Add(coin14);
+            _gcList.Add(coin15);
+            _gcList.Add(coin16);
+            _gcList.Add(coin17);
+            _gcList.Add(coin18);
 
 
             m1 = false;
@@ -151,8 +195,7 @@ namespace CustomMario
 
                 coin.X = 1000; coin.Y = 45;
                 coin = SplashKit.ToWorld(coin);           //Coin hud
-                SplashKit.DrawText("5", Color.Black, font, 30, coin.X + 86, coin.Y + 5);
-
+                SplashKit.DrawText(" " + totalCoins, Color.Black, font, 30, coin.X + 86, coin.Y + 5);
 
 
 
@@ -172,8 +215,10 @@ namespace CustomMario
 
                 _gcList.Draw(_rects, Mario_hitbox, Mario_rectDown, ref lives);         //Game character AI
                 _lifeUpdate = _gcList.Lives(_rects, Mario_hitbox, Mario_rectDown, ref lives);
+                _coinAdd = _gcList.Coins(Mario_hitbox);
                 if (Mario_location.X > 4275) { _goomba9.Moving(_rects, Mario_hitbox, Mario_rectDown, lives); }
                 lives += _lifeUpdate;
+                totalCoins += _coinAdd;
 
 
                 // Update player states
@@ -207,7 +252,7 @@ namespace CustomMario
                 }
 
                 // Death state
-                if (lives == 0)
+                if (lives == 0 || timeRemaining == 0)
                 {
                     _dies = true;
                     player.Death();
@@ -220,6 +265,7 @@ namespace CustomMario
                 //Spawning mushrooms
 
                 QuestionBlock collidedBlock = player.collideActiveBlocks_block(QB_obj, Mario_hitbox);
+                Mushroom mushroom = null;
                 if (collidedBlock != null)
                 {
                     Console.WriteLine("Collision with an active block detected.");
@@ -227,33 +273,43 @@ namespace CustomMario
                     usedBlock newBlock = new usedBlock(collidedBlock.Rect().X, collidedBlock.Rect().Y);
                     int index = player.CollideActiveBlocks_index(_mapObj, Mario_hitbox);
                     Console.WriteLine(index);
+                    mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - newBlock.Rect().Height);
                     if (index == 0 && !m1)
                     {
                         m1 = true;
-                        Mushroom mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - newBlock.Rect().Height);
+                        SplashKit.PlaySoundEffect(powerUpAppearSFX);
                         _gcList.Add(mushroom);
                     }
-                    if (index == 3 && !m2)
+                    else if (index == 3 && !m2)
                     {
                         m2 = true;
-                        Mushroom mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - newBlock.Rect().Height);
+                        SplashKit.PlaySoundEffect(powerUpAppearSFX);
                         _gcList.Add(mushroom);
                     }
-                    if (index == 9 && !m3)
+                    else if (index == 9 && !m3)
                     {
                         m3 = true;
-                        Mushroom mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - newBlock.Rect().Height);
+                        SplashKit.PlaySoundEffect(powerUpAppearSFX);
                         _gcList.Add(mushroom);
                     }
-                    if (index == 10 && !m4)
+                    else if (index == 10 && !m4)
                     {
                         m4 = true;
-                        Mushroom mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - newBlock.Rect().Height);
+                        SplashKit.PlaySoundEffect(powerUpAppearSFX);
                         _gcList.Add(mushroom);
                     }
 
-
+                    //for (int i = 0; i < _gcList.Count; i++)
+                    //{
+                    //    if (_gcList[i] is Mushroom && mushroom.CheckCollision(Mario_hitbox))
+                    //    {
+                    //        Console.WriteLine("Absorbed");
+                    //        _gcList.Remove(mushroom);
+                    //        i--; // Adjust index after removal to continue iteration correctly
+                    //    }
+                    //}
                 }
+               
 
 
                 // Update the window display
