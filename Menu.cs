@@ -26,7 +26,7 @@ namespace CustomMario
 
             _point = new Point2D();
 
-            menuMusic = SplashKit.LoadSoundEffect("Plains", "F:\\Projects\\repo\\CustomMario\\Resources\\music\\Plains.mp3");
+            menuMusic = SplashKit.LoadSoundEffect("Plains", "F:\\Projects\\repo\\CustomMario\\Resources\\music\\Plains2.mp3");
 
             map = new DrawMap();
         }
@@ -52,10 +52,6 @@ namespace CustomMario
             logo.Draw(MarioWindow.Width / 2 + 550, 25);
             MarioWindow.DrawText("Press R to start", Color.Black,  MarioWindow.Width / 2 + 750, 300);
             SplashKit.MoveCameraTo(MarioWindow.Width / 2 + 175, MarioWindow.Height / 2 - 500);
-            //if (SplashKit.KeyDown(KeyCode.KKey))
-            //{
-            //    Console.WriteLine("pressed");
-            //}
             SplashKit.RefreshScreen(60);
         }
 

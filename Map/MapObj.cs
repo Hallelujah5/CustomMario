@@ -47,6 +47,7 @@ namespace CustomMario.Map
         Point2D _pt;
         Bitmap block;
         Rectangle _rect;
+  
         //Sprite _sprite;
 
         public QuestionBlock(double x, double y)
@@ -55,7 +56,7 @@ namespace CustomMario.Map
             _pt.X = x;
             _pt.Y = y;
             _rect = new Rectangle(Convert.ToInt32(_pt.X), Convert.ToInt32(_pt.Y), block.Width, block.Height);
-
+        
             ////animation script
             //block.SetCellDetails(block.Width / 4, block.Height, 4, 1, 4);
             //AnimationScript walkingScript = SplashKit.LoadAnimationScript("questionBlockScript", "questionBlockScript.txt");
@@ -76,6 +77,7 @@ namespace CustomMario.Map
 
         public override Rectangle Rect() { return _rect; }
 
+      
 
     }
 

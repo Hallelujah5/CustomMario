@@ -12,10 +12,11 @@ namespace CustomMario
     {
         Bitmap mIdle, mJump, mMoving, mDuck, mDie, mVictory,currentPose;
         //private Sprite _player;
-        private const int Xspeed = 20;
+        private const int Xspeed = 11;
         private Point2D _location;
         bool _facingRight = true;
-    
+
+        Mushroom mr1;
         List<Rectangle> rects;
         SoundEffect _jumpUp;
         SoundEffect coinCollect;
@@ -47,6 +48,7 @@ namespace CustomMario
             _location.X = x;
             _location.Y = y;
 
+            
 
             Console.WriteLine("Mario loaded successfully!");
 
@@ -67,6 +69,7 @@ namespace CustomMario
         {
             SplashKit.DrawText("X: " + _location.X/75, Color.Black, _location.X +10, _location.Y -30);
             SplashKit.DrawText("Y: " + _location.Y, Color.Black, _location.X +10, _location.Y -20);
+            SplashKit.DrawText("Yvelocity: " + yVelocity, Color.Black, _location.X + 10, _location.Y - 10);
         }
 
 
@@ -83,13 +86,13 @@ namespace CustomMario
                                           //int x, int y, int width, int height
                                           //character bitmap is 80x86
                                           
-            _rectUp = new Rectangle(Convert.ToInt32(_location.X) + 20, Convert.ToInt32(_location.Y) + 4, 36, 2);
-            _rectDown = new Rectangle(Convert.ToInt32(_location.X) + 20, Convert.ToInt32(_location.Y) + 86, 36, 1);
+            _rectUp = new Rectangle(Convert.ToInt32(_location.X) + 10, Convert.ToInt32(_location.Y) + 4, 50, 1);
+            _rectDown = new Rectangle(Convert.ToInt32(_location.X) + 10, Convert.ToInt32(_location.Y) + 86, 50, 1);
             _rectLeft = new Rectangle(Convert.ToInt32(_location.X) + 5, Convert.ToInt32(_location.Y) + 5, 1, 81);
             _rectRight = new Rectangle(Convert.ToInt32(_location.X) + 65, Convert.ToInt32(_location.Y) + 5, 1, 81);
             //should be handled after genmap.cs
 
-            _hitbox = new Rectangle(Convert.ToInt32(_location.X) + 10, Convert.ToInt32(_location.Y) + 4, 52, 80);
+            _hitbox = new Rectangle(Convert.ToInt32(_location.X) + 10, Convert.ToInt32(_location.Y) , 52, 80);
 
             SplashKit.DrawRectangle(Color.Red, _rectUp.X, _rectUp.Y, _rectUp.Width, _rectUp.Height);
             SplashKit.DrawRectangle(Color.Green, _rectDown.X, _rectDown.Y, _rectDown.Width, _rectDown.Height);
@@ -125,7 +128,6 @@ namespace CustomMario
 
 
 
-
         // Check collision with platforms
         public Boolean Collision(List<Rectangle> rects, Rectangle RECT)     //rects is the list<> rects of the map, RECT is the directional hitbox of the character.
         {
@@ -145,23 +147,32 @@ namespace CustomMario
 
 
 
+
+
         //Check collisions with active blocks (like question blocks)
-        public Boolean collideActiveBlocks(List<Rectangle> rects, Rectangle RECT)     //rects is the list<> rects of the map, RECT is the directional hitbox of the character.
+        public int CollideActiveBlocks_index(List<Rectangle> QB_rects, Rectangle RECT)                    //this returns the index of the Question Block in the list of QB rects 
         {
-
-            foreach (Rectangle rect in rects)
+            for (int i = 0; i < QB_rects.Count; i++)
             {
-
-                if (RECT.IntersectsWith(rect) && rect is QuestionBlock)
+                if (RECT.IntersectsWith(QB_rects[i]))
                 {
-                    return true;                       //returns true if collide 
-                    
+                    return i;  
                 }
-
             }
-            return false;                //else return false
+            return -1;  // No collision detected
         }
-
+        //this returns the QuestionBlock class 
+        public QuestionBlock collideActiveBlocks_block(List<MapObject> QB_objs, Rectangle RECT)
+        {
+            foreach (MapObject obj in QB_objs)
+            {
+                if (RECT.IntersectsWith(obj.Rect()) && obj is QuestionBlock)
+                {
+                    return (QuestionBlock)obj;  // Return the collided QuestionBlock
+                }
+            }
+            return null;  // No collision detected
+        }   
 
 
         public double AntiGlitch(List<Rectangle> rects, Rectangle RECT, double speedX, double speedY)   //calculates a safe speed value to apply to the player's position.
@@ -206,7 +217,7 @@ namespace CustomMario
             return length;
         }
 
-
+            
 
         //====Gravity data====
         private float gravityVlc = 1;      
@@ -219,7 +230,11 @@ namespace CustomMario
 
         bool moving ;
         bool ducked;
-        public void HandleInput(List<Rectangle> rects)
+
+
+
+
+        public void HandleInput(List<Rectangle> rects, List<Rectangle> QB_rects, List<MapObject> QB_objs, ref int lives)
         {
             ducked = false;
             moving = false;
@@ -234,10 +249,37 @@ namespace CustomMario
 
             //}  
 
-            if (collideActiveBlocks(rects, _rectUp))
-            {
-                Console.WriteLine("collision with an active block detected.");
-            }
+            //if (collideActiveBlocks(QB_rects, _hitbox))
+            //{
+            //    Console.WriteLine("collision with an active block detected.");
+            //}
+
+
+
+
+
+            //QuestionBlock collidedBlock = collideActiveBlocks_block(QB_objs, _hitbox);
+            //if (collidedBlock != null)
+            //{
+            //    Console.WriteLine("Collision with an active block detected.");
+
+            //    usedBlock newBlock = new usedBlock(collidedBlock.Rect().X, collidedBlock.Rect().Y);
+        
+            //    int index = CollideActiveBlocks_index(QB_rects, _hitbox);        //index of collided block
+            //    if (index != -1)
+            //    {
+            //        QB_objs[index] = newBlock;
+            //    }
+                
+            //    QB_objs.Remove(collidedBlock);                                                          
+            //    QB_objs.Add(newBlock);
+            //    //Mushroom mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - newBlock.Rect().Height);
+            //    //mushroom.Moving(rects, _hitbox, _rectDown);
+            //}
+
+
+
+
 
 
             //if (SplashKit.KeyDown(KeyCode.WKey) && (SplashKit.KeyDown(KeyCode.SKey)))
@@ -283,6 +325,7 @@ namespace CustomMario
             if (!onAir(rects))      //if on ground then xVelocity = 0. Note: differentiate between xVelocity and Xspeed, one is for moving mid-air and one is for moving on ground.
             {
                 xVelocity = 0;
+                yVelocity = 0;
             }
 
 
@@ -314,6 +357,7 @@ namespace CustomMario
                 moving = true;
                 yVelocity -= 25;
                 currentPose = mJump;
+
             }
 
             //jumping up
@@ -323,7 +367,7 @@ namespace CustomMario
                 yVelocity += gravityVlc;     //incrementing the Y velocity to ensure the player slow down as they reach the peak of their jump.
                 if (Math.Abs(yVelocity) > 30)
                 {
-                    yVelocity = yVelocity < 0 ? -30 : 30;           //cap the maximum falling/jumping velocity to 50.
+                    yVelocity = yVelocity < 0 ? -30 : 30;           //cap the maximum falling/jumping velocity to 30.
                 }
                 double speed = AntiGlitch(rects, _rectUp, 0, yVelocity);        //calculates safe distance
                 _location.Y += speed;   
@@ -340,7 +384,7 @@ namespace CustomMario
 
                 if (Math.Abs(yVelocity) > 30)
                 {
-                    yVelocity = yVelocity < 0 ? -30 : 30;             //cap at 50
+                    yVelocity = yVelocity < 0 ? -30 : 30;             //cap at 0
                 }
                 double speed = AntiGlitch(rects, _rectDown, 0, yVelocity);
                 _location.Y += speed;
@@ -348,6 +392,7 @@ namespace CustomMario
                 { 
                     yVelocity = 0;      //stops falling
                 }
+                
             }   
 
 
@@ -366,51 +411,20 @@ namespace CustomMario
                     Console.WriteLine("Mario has fallen off the map!");
                     _location.X = 50;
                     _location.Y = 50;
-                
+                    lives -=1 ;
             }
 
-            if (_location.X > 13500 && _location.X < 13725 && _location.Y > 500)
+            if (_location.X > 13500 && _location.X < 13625 && _location.Y > 500)
             {
                 currentPose = mVictory;
 
             }
+            if (lives == 0)
+            {
+                currentPose = mDie;
+            }
 
 
-
-
-
-
-
-                ////Animation update
-                //if (SplashKit.KeyTyped(KeyCode.DKey))
-                //{
-                //    _player.StartAnimation("WalkRight");        //Right
-                //}
-                //if (SplashKit.KeyTyped(KeyCode.AKey))
-                //{
-                //    _player.StartAnimation("WalkLeft");         //Left
-                //}
-                //if (SplashKit.KeyDown(KeyCode.SKey))
-                //{
-                //    currentPose = mDuck;            //Duck
-                //}
-
-                ////Speed
-                //if (SplashKit.KeyDown(KeyCode.DKey))
-                //{
-                //    _player.X += XSpeed;
-                //}
-                //if (SplashKit.KeyDown(KeyCode.AKey))
-                //{
-                //    _player.X -= XSpeed;
-                //}
-
-                //if (SplashKit.KeyTyped(KeyCode.WKey) && onGround)         //Jump
-                //{
-                //    yVelocity = jumpSpeed;
-                //    onGround = false;
-                //    currentPose = mJump;
-                //}
                 Draw(currentPose, _facingRight);
         }
 
@@ -418,13 +432,14 @@ namespace CustomMario
 
         public void Winning()
         {
-            currentPose = mVictory;
-
-
-          
+            currentPose = mVictory;        
 
         }
 
+        public void Death()
+        {
+            currentPose = mDie;
+        }
 
 
 

@@ -13,16 +13,26 @@ namespace CustomMario.Map
     public class MapGen
     {
         List<MapObject> _MapObj;
-        List<Rectangle> _rects;
+        List<Rectangle> _rects, QB_rects;
+        List<MapObject> QB_obj;
         public MapGen()
         {
             _MapObj = new List<MapObject>();
+            QB_obj = new List<MapObject>();
         }
 
         public void Add(MapObject tile)
         {
             _MapObj.Add(tile);
         }
+
+
+            public void QB_Add(QuestionBlock block)
+            {
+                QB_obj.Add(block);          //Add QB blocks to QB List
+            }
+
+
 
         public void Draw()
         {
@@ -32,6 +42,13 @@ namespace CustomMario.Map
             }
            // Console.WriteLine("Number of tiles: " + _MapObj.Count);
         }
+            public void QB_Draw()
+            {
+                foreach (MapObject tile in QB_obj)
+                {
+                    tile.Draw();            //Draw all Question Blocks
+                }
+            }
 
         public List<Rectangle> getRect()
         {
@@ -45,6 +62,29 @@ namespace CustomMario.Map
             }
             return _rects;
         }
+
+            public List<Rectangle> getQB_rects()
+            {
+                if (QB_rects == null)
+                {
+                    QB_rects = new List<Rectangle>();     // if list not exist, create new
+                }
+                foreach (MapObject obj in _MapObj)
+                {
+                    if (obj is QuestionBlock)
+                    {
+                        QB_rects.Add(obj.Rect());
+                  
+                    }
+                }
+                return QB_rects;            //if works correctly, this should return only the rectangles of QuestionBlock
+            }
+
+            public List<MapObject> getQB_list()
+            {
+                return QB_obj;          //return QB list
+            }
+     
     }
     public class DrawMap
     {
@@ -66,37 +106,49 @@ namespace CustomMario.Map
                     }
                 }
 
+
+        
                 //Question Block
-                if (i == 31 || i == 53 || i == 58)
+                if (i == 58)
                 {
-                    if (i == 58)
-                    {
-                        QuestionBlock block2 = new QuestionBlock(60 * i, 80);  
-                        map.Add(block2);
-                    }
+                    QuestionBlock block2 = new QuestionBlock(60 * i, 80);
+
+                    map.Add(block2);
+
+                    map.QB_Add(block2);
+                }
+                if (i == 31 || i == 53)
+                {                     
                     QuestionBlock block = new QuestionBlock(60 * i, 330);
                     map.Add(block);
+                    map.QB_Add(block);
                 }
                 if (i == 73)
                 {
                     QuestionBlock block = new QuestionBlock(60 * i, 80);
                     map.Add(block);
+                    map.QB_Add(block);
                 }
                 if ( i == 108 || i == 109 || i == 110 || i == 111)
                 {
                     QuestionBlock block3 = new QuestionBlock(60 * i, -190);
                     map.Add(block3);
+                    map.QB_Add(block3);
                 }
                 if (i == 116)
                 {
                     QuestionBlock used2 = new QuestionBlock(60 * i, -245);
                     map.Add(used2);
+                    map.QB_Add(used2);
                 }
                 if (i == 140)
                 {
                     QuestionBlock used2 = new QuestionBlock(60 * i, 20);
                     map.Add(used2);
+                    map.QB_Add(used2);
                 }
+
+
 
 
 
@@ -127,7 +179,6 @@ namespace CustomMario.Map
                     }
                 }
                 if (i == 68 || i == 69){ usedBlock used3 = new usedBlock(60 * i, 390); map.Add(used3);}
-
                 if (i == 72)
                 {
                     usedBlock block = new usedBlock(60 * i, 80);
@@ -160,6 +211,7 @@ namespace CustomMario.Map
                     {
                         QuestionBlock block3 = new QuestionBlock(60 * i, -420);
                         map.Add(block3);
+                        map.QB_Add(block3);
                     }
 
                     Stone used = new Stone(60 * i, -180);
@@ -169,17 +221,11 @@ namespace CustomMario.Map
 
                 
 
-
-
-
-
                     //Castle
                     if (i == 180)
                 {
                     Castle castle = new Castle(75 * i, 396);
                 }
-
-
 
 
                     
@@ -204,8 +250,6 @@ namespace CustomMario.Map
                         map.Add(stone);
                     }
                 }
-
-
                 if (i == 155 || i == 156 || i == 157 || i == 158 || i == 159)
                 {
                     if (i == 155)
@@ -231,8 +275,6 @@ namespace CustomMario.Map
                     Stone stone = new Stone(60 * i, 570);
                     map.Add(stone);
                 }
-
-
                 if (i == 190)
                 {
                     Stone stone3 = new Stone(60 * i + 15, 510);
@@ -296,6 +338,8 @@ namespace CustomMario.Map
             }
 
             map.Draw();       //Draw all block
+
+            //map.QB_Draw();      //Draw the question blocks
         }
 
         public List<Rectangle> getRect()
@@ -303,8 +347,15 @@ namespace CustomMario.Map
             return map.getRect();
         }
 
+        public List<Rectangle> getQB_rects()
+        {
+            return map.getQB_rects();
+        }
 
-
+        public List<MapObject> getQB_list()
+        {
+            return map.getQB_list();
+        }
 
 
     }
