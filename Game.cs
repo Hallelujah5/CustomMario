@@ -41,7 +41,7 @@ namespace CustomMario
         public void Load()
         {
             map = new DrawMap();
-            player = new Mario(1450, 50);
+            player = new Mario(50, 50);
             bgImage = new Bitmap("Bg", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\background2.png");
 
             _point = new Point2D();
@@ -81,7 +81,6 @@ namespace CustomMario
             _goomba8 = new Goomba(135, 560);
             _goomba9 = new Goomba(73, 560);
 
-
             _gcList.Add(_goomba1);
             _gcList.Add(_goomba2);
             _gcList.Add(_goomba3);
@@ -90,6 +89,7 @@ namespace CustomMario
             _gcList.Add(_goomba6);
             _gcList.Add(_goomba7);
             _gcList.Add(_goomba8);
+
 
             coin2 = new Coin(32, 560);          //Y 560 is the ground level
             coin3 = new Coin(29, 560);
