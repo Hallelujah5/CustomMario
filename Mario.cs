@@ -37,12 +37,7 @@ namespace CustomMario
             //SFX
             _jumpUp = SplashKit.LoadSoundEffect("SFXup", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXJump.mp3");
 
-            ////animation script
-            //mMoving.SetCellDetails(mMoving.Width / 2, mMoving.Height / 2, 2, 2, 4);
-            //AnimationScript walkingScript = SplashKit.LoadAnimationScript("WalkingScript", "walkingScript.txt");
-            //_player = SplashKit.CreateSprite(mMoving, walkingScript);
-
-
+    
             currentPose = mIdle;
             //_player.StartAnimation(0);
             _location.X = x;
@@ -240,63 +235,8 @@ namespace CustomMario
             moving = false;
             setHitbox();
             debugLocation();
-            //Idle when not jump, not duck, not moving A D
-            //Show running animation when A D
-
-
-            //if (!SplashKit.KeyDown(KeyCode.WKey) && !(SplashKit.KeyDown(KeyCode.SKey)) )
-            //{
-
-            //}  
-
-            //if (collideActiveBlocks(QB_rects, _hitbox))
-            //{
-            //    Console.WriteLine("collision with an active block detected.");
-            //}
-
-
-
-
-
-            //QuestionBlock collidedBlock = collideActiveBlocks_block(QB_objs, _hitbox);
-            //if (collidedBlock != null)
-            //{
-            //    Console.WriteLine("Collision with an active block detected.");
-
-            //    usedBlock newBlock = new usedBlock(collidedBlock.Rect().X, collidedBlock.Rect().Y);
-        
-            //    int index = CollideActiveBlocks_index(QB_rects, _hitbox);        //index of collided block
-            //    if (index != -1)
-            //    {
-            //        QB_objs[index] = newBlock;
-            //    }
-                
-            //    QB_objs.Remove(collidedBlock);                                                          
-            //    QB_objs.Add(newBlock);
-            //    //Mushroom mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - newBlock.Rect().Height);
-            //    //mushroom.Moving(rects, _hitbox, _rectDown);
-            //}
-
-
-
-
-
-
-            //if (SplashKit.KeyDown(KeyCode.WKey) && (SplashKit.KeyDown(KeyCode.SKey)))
-            //{
-            //    Console.WriteLine("Drawing idle");
-            //    Draw(currentPose, _facingRight);
-            //}
-            //else
-            //{
-            //    if (SplashKit.KeyDown(KeyCode.AKey)) { _player.StartAnimation("WalkLeft"); }
-            //    if (SplashKit.KeyDown(KeyCode.DKey)) { _player.StartAnimation("WalkRight"); }
-            //}
-
-
-
+ 
             //set current pose for character 
-
             if (!moving && !onAir(rects) && !ducked)       //if not ducking, moving and not mid-air then idle pose
             {
                 currentPose = mIdle;        
@@ -394,7 +334,6 @@ namespace CustomMario
                 }
                 
             }   
-
 
 
             //Duck

@@ -215,13 +215,7 @@ namespace CustomMario
 
             _hitbox = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y),60, 57);
 
-            SplashKit.DrawRectangle(Color.Red, _rectUp.X, _rectUp.Y, _rectUp.Width, _rectUp.Height);
-            SplashKit.DrawRectangle(Color.Green, _rectDown.X, _rectDown.Y, _rectDown.Width, _rectDown.Height);
-            SplashKit.DrawRectangle(Color.Blue, _rectLeft.X, _rectLeft.Y, _rectLeft.Width, _rectLeft.Height);
-            SplashKit.DrawRectangle(Color.Yellow, _rectRight.X, _rectRight.Y, _rectRight.Width, _rectRight.Height);
-
-            SplashKit.DrawRectangle(Color.Purple, _hitbox.X, _hitbox.Y, _hitbox.Width, _hitbox.Height);
-        }
+           }
 
         public void debugLocation()
         {
@@ -367,12 +361,7 @@ namespace CustomMario
 
             _hitbox = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 60, 57);
 
-            SplashKit.DrawRectangle(Color.Red, _rectUp.X, _rectUp.Y, _rectUp.Width, _rectUp.Height);
-            SplashKit.DrawRectangle(Color.Green, _rectDown.X, _rectDown.Y, _rectDown.Width, _rectDown.Height);
-            SplashKit.DrawRectangle(Color.Blue, _rectLeft.X, _rectLeft.Y, _rectLeft.Width, _rectLeft.Height);
-            SplashKit.DrawRectangle(Color.Yellow, _rectRight.X, _rectRight.Y, _rectRight.Width, _rectRight.Height);
-
-            SplashKit.DrawRectangle(Color.Purple, _hitbox.X, _hitbox.Y, _hitbox.Width, _hitbox.Height);
+        
         }
 
         public void debugLocation()
