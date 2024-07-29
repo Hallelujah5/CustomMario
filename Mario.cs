@@ -11,17 +11,12 @@ namespace CustomMario
     public class Mario
     {
         Bitmap mIdle, mJump, mMoving, mDuck, mDie, mVictory,currentPose;
-        //private Sprite _player;
+  
         private const int Xspeed = 11;
         private Point2D _location;
         bool _facingRight = true;
 
-        Mushroom mr1;
-        List<Rectangle> rects;
         SoundEffect _jumpUp;
-        SoundEffect coinCollect;
-        SoundEffect enemyDmg;
-        SoundEffect up1;
 
         public Mario(double x, double y)
         {
@@ -49,10 +44,6 @@ namespace CustomMario
 
         }
 
-        //public void Draw()
-        //{
-        //    _player.Draw(100, 500);
-        //}
 
 
         public Point2D getLocation()
@@ -221,7 +212,6 @@ namespace CustomMario
         private float xVelocity = 0;        //represents the horizontal velocity while airborne
 
         private bool airRight = true;       //faces right while mid-air
-        private bool onGround = false;     //false by default 
 
         bool moving ;
         bool ducked;

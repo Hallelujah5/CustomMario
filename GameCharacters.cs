@@ -11,7 +11,7 @@ using System.Xml;
 using System.Net.WebSockets;
 
 namespace CustomMario
-{           
+{
 
     public class GC_List
     {
@@ -33,6 +33,17 @@ namespace CustomMario
         {
             _gcList.Remove(_entity);
         }
+
+        public void AddGoombas(List<Goomba> goombaList)
+        {
+            foreach (var goomba in goombaList)
+            {
+                Add(goomba);
+            }
+        }
+
+
+
 
         public List<GameCharacter> Get_gcList()
         {
@@ -72,13 +83,13 @@ namespace CustomMario
                     {
                         SplashKit.PlaySoundEffect(SFXGoombaHit);
                         return _entity.Lives(lives);        //-1 life
-                    }   
+                    }
                 }
             }
             return 0;
-            
+
         }
-   
+
         public int Coins(Rectangle Mario_hitbox)
         {
             for (int i = 0; i < _gcList.Count; i++)
@@ -86,7 +97,7 @@ namespace CustomMario
                 GameCharacter _entity = _gcList[i];
                 if (_entity is Coin)
                 {
-                    if (_entity.CheckCollision(Mario_hitbox))           
+                    if (_entity.CheckCollision(Mario_hitbox))
                     {
                         _gcList.Remove(_entity);
                         return 1;
@@ -162,6 +173,40 @@ namespace CustomMario
         public abstract bool CheckCollision(Rectangle Mario_hitbox);
         public abstract int Lives(int lives);
     }
+
+
+
+    public class GoombaList
+    {
+         List<Goomba> _goombaList;
+         SoundEffect _sfxGoomba;
+         SoundEffect _sfxGoombaHit;
+
+        public GoombaList()
+        {
+            _goombaList = new List<Goomba>();
+            _sfxGoomba = SplashKit.LoadSoundEffect("GoombaDies", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXgoomba.mp3");
+            _sfxGoombaHit = SplashKit.LoadSoundEffect("GoombaHit", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXGoombaHit.mp3");
+        }
+        
+        public void InitializeGoombas(double[,] positions)
+        {
+            for (int i = 0; i < positions.GetLength(0); i++)
+            {
+                double x = positions[i, 0];
+                double y = positions[i, 1];
+                _goombaList.Add(new Goomba(x, y));
+            }
+        }
+
+        public List<Goomba> GetGoombas()
+        {
+            return _goombaList;
+        }
+    }
+
+
+
     public class Goomba : GameCharacter
     {
         public Bitmap _moving;
@@ -177,11 +222,11 @@ namespace CustomMario
 
         public Goomba(double x, double y)
         {
-            _moving = new Bitmap("goombaMove", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\goomba.png");  
+            _moving = new Bitmap("goombaMove", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\goomba.png");
 
             _location.X = x * 75;
             _location.Y = y;
-    
+
 
 
         }
@@ -211,11 +256,11 @@ namespace CustomMario
             _rectUp = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 60, 1);
             _rectDown = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y) + 60, 60, 1);
             _rectLeft = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 1, 60);
-            _rectRight = new Rectangle(Convert.ToInt32(_location.X)+60, Convert.ToInt32(_location.Y), 1, 60);
+            _rectRight = new Rectangle(Convert.ToInt32(_location.X) + 60, Convert.ToInt32(_location.Y), 1, 60);
 
-            _hitbox = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y),60, 57);
+            _hitbox = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 60, 57);
 
-           }
+        }
 
         public void debugLocation()
         {
@@ -226,7 +271,7 @@ namespace CustomMario
         // Check collision with platforms
 
 
-            
+
         float yVelocity = 0;
         bool moving;
         float gravityVlc = 1;
@@ -235,7 +280,7 @@ namespace CustomMario
 
         bool _iframe = false;
         DateTime _iframeStart;
-        const int iframeDuration= 1000; // 1 second
+        const int iframeDuration = 1000; // 1 second
 
 
         public override void Moving(List<Rectangle> rects, Rectangle Mario_hitbox, Rectangle mario_rectDown, int lives)
@@ -305,7 +350,7 @@ namespace CustomMario
                 Console.WriteLine(" Goomba ");
                 _iframe = true;
                 _iframeStart = DateTime.Now;
-           
+
                 return true;
             }
             if (_iframe && (DateTime.Now - _iframeStart).TotalMilliseconds >= iframeDuration)           //Mario will have 1 second invincibiliy timer before he takes dmg from the same Goomba again
@@ -319,7 +364,7 @@ namespace CustomMario
 
         public override void Draw()
         {
-            SplashKit.DrawBitmap(_moving, _location.X, _location.Y); 
+            SplashKit.DrawBitmap(_moving, _location.X, _location.Y);
         }
 
 
@@ -331,7 +376,7 @@ namespace CustomMario
     {
         public Bitmap mushroom;
         Point2D _location;
-   
+
         const int speed = 7;
         private Rectangle _rectUp;
         private Rectangle _rectDown;
@@ -361,7 +406,7 @@ namespace CustomMario
 
             _hitbox = new Rectangle(Convert.ToInt32(_location.X), Convert.ToInt32(_location.Y), 60, 57);
 
-        
+
         }
 
         public void debugLocation()
@@ -481,10 +526,45 @@ namespace CustomMario
     }
 
 
+    public class coinList
+    {
+        List<Coin> _coinList;
+        public coinList()
+        {
+            _coinList = new List<Coin>();
+        }
 
+        public void Add(Coin coin)
+        {
+            _coinList.Add(coin);
+        }
 
+        public void Remove(Coin coin)
+        {
+            _coinList.Remove(coin);
+        }
+        public List<Coin> getCoinList()
+        {
+            return _coinList;
+        }
 
+        public int Draw(Rectangle Mario_hitbox)
+        {
+            for (int i = 0; i < _coinList.Count; i++)
+            {
+                Coin coin = _coinList[i];
+                coin.setHitbox();
+                coin.Draw();
+                if (coin.CheckCollision(Mario_hitbox))
+                {
+                    _coinList.Remove(coin);
+                    return 1;
+                }
 
+            }
+            return 0;
+        }
+    }
 
 
     public class Coin : GameCharacter

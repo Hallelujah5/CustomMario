@@ -8,6 +8,7 @@ using SplashKitSDK;
 using Rectangle = System.Drawing.Rectangle;
 using System.Threading;
 using System.Diagnostics;
+using System.Collections;
 
 namespace CustomMario
 {
@@ -28,7 +29,7 @@ namespace CustomMario
         Font font;
         int lives, countdownTimer, _lifeUpdate, totalCoins, _coinAdd;
         SplashKitSDK.Timer gameTimer;
-        Goomba _goomba1, _goomba2, _goomba3, _goomba4, _goomba5, _goomba6, _goomba7, _goomba8, _goomba9;
+        Goomba _goomba9;
         bool m1, m2, m3, m4;
         GC_List _gcList;
         bool _pause;
@@ -36,7 +37,10 @@ namespace CustomMario
         bool _courseEnded;
         SoundEffect VictorySFX, LifeLostSFX, powerUpAppearSFX;
         bool _dies;
-        Coin coin1,coin2,coin3,coin4,coin5,coin6, coin7, coin8, coin9, coin10, coin11, coin12, coin13, coin14, coin15, coin16, coin17, coin18, coin19, coin20;
+        coinList _coinList;
+        GoombaList _goombaList;
+        double[,] coinPositions, goombaPositions;
+
 
         public void Load()
         {
@@ -50,6 +54,8 @@ namespace CustomMario
             Time = new Bitmap("Time", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\TimeSprite2.png");
             Coin = new Bitmap("Coin", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\HUDCoinSprite4.png");
 
+            _coinList = new coinList();
+            _goombaList = new GoombaList();
 
             SplashKit.PlaySoundEffect(_bgMusic, -1); // -1 loops indefinitely
             font = SplashKit.LoadFont("Arial", "F:\\Projects\\repo\\CustomMario\\Resources\\fonts\\ARIALBD.TTF");
@@ -65,74 +71,42 @@ namespace CustomMario
             countdownTimer = 100;
             gameTimer = SplashKit.CreateTimer("Timer");
             SplashKit.StartTimer(gameTimer);
-
-
-            //enemies initialization
-
             _gcList = new GC_List();
 
-            _goomba1 = new Goomba(10, 560);
-            _goomba2 = new Goomba(17, 560);
-            _goomba3 = new Goomba(160, 560);
-            _goomba4 = new Goomba(44, 560);
-            _goomba5 = new Goomba(52, 560);
-            _goomba6 = new Goomba(86, 560);
-            _goomba7 = new Goomba(112, 560);
-            _goomba8 = new Goomba(135, 560);
+
+            coinPositions = new double[,]
+            {
+                {32, 560}, {29, 560}, {30, 560}, {31, 560}, {35, 150},
+                {36, 75}, {37, 0}, {38, -20}, {59, 560}, {56, 560},
+                {57, 560}, {58, 560}, {73, 560}, {71, 560}, {72, 560},
+                {73, -6}, {72, -6}
+            };
+            for (int i = 0; i < coinPositions.GetLength(0); i++)
+                {
+                    double x = coinPositions[i, 0];
+                    double y = coinPositions[i, 1];
+                    _coinList.Add(new Coin(x, y));
+                }
+
+            //enemies initialization
+            goombaPositions = new double[,]
+            {
+                {10, 560}, {17, 560}, {160, 560}, {44, 560}, {52, 560},
+                {86, 560}, {112, 560}, {135, 560}, {73, 560}
+            };
+
+            for (int i = 0; i < goombaPositions.GetLength(0); i++)
+            {
+                double x = goombaPositions[i, 0];
+                double y = goombaPositions[i, 1];
+                _gcList.Add(new Goomba(x, y));
+            }
+
+
+            _goombaList.InitializeGoombas(goombaPositions);
+            _gcList.AddGoombas(_goombaList.GetGoombas());
+
             _goomba9 = new Goomba(73, 560);
-
-            _gcList.Add(_goomba1);
-            _gcList.Add(_goomba2);
-            _gcList.Add(_goomba3);
-            _gcList.Add(_goomba4);
-            _gcList.Add(_goomba5);
-            _gcList.Add(_goomba6);
-            _gcList.Add(_goomba7);
-            _gcList.Add(_goomba8);
-
-
-            coin2 = new Coin(32, 560);          //Y 560 is the ground level
-            coin3 = new Coin(29, 560);
-            coin4 = new Coin(30, 560);
-            coin5 = new Coin(31, 560);
-
-            coin6 = new Coin(35, 150);
-            coin7 = new Coin(36, 75);
-            coin8 = new Coin(37, 0);
-            coin9 = new Coin(38, -20);
-
-
-            coin10 = new Coin(59, 560);
-            coin11 = new Coin(56, 560);
-            coin12 = new Coin(57, 560);
-            coin13 = new Coin(58, 560);
-
-            coin14 = new Coin(73, 560);
-            coin15 = new Coin(71, 560);
-            coin16 = new Coin(72, 560);
-
-            coin17 = new Coin(73, -6);
-            coin18 = new Coin(72, -6);
-
-         
-            _gcList.Add(coin2);
-            _gcList.Add(coin3);
-            _gcList.Add(coin4);
-            _gcList.Add(coin5);
-            _gcList.Add(coin6);
-            _gcList.Add(coin7);
-            _gcList.Add(coin8);
-            _gcList.Add(coin9);
-            _gcList.Add(coin10);
-            _gcList.Add(coin11);
-            _gcList.Add(coin12);
-            _gcList.Add(coin13);
-            _gcList.Add(coin14);
-            _gcList.Add(coin15);
-            _gcList.Add(coin16);
-            _gcList.Add(coin17);
-            _gcList.Add(coin18);
-
 
             m1 = false;
             m2 = false;
@@ -215,7 +189,8 @@ namespace CustomMario
 
                 _gcList.Draw(_rects, Mario_hitbox, Mario_rectDown, ref lives);         //Game character AI
                 _lifeUpdate = _gcList.Lives(_rects, Mario_hitbox, Mario_rectDown, ref lives);
-                _coinAdd = _gcList.Coins(Mario_hitbox);
+                _coinAdd = _coinList.Draw(Mario_hitbox);
+
                 if (Mario_location.X > 4275) { _goomba9.Moving(_rects, Mario_hitbox, Mario_rectDown, lives); }
                 lives += _lifeUpdate;
                 totalCoins += _coinAdd;
