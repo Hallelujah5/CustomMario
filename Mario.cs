@@ -80,11 +80,6 @@ namespace CustomMario
 
             _hitbox = new Rectangle(Convert.ToInt32(_location.X) + 10, Convert.ToInt32(_location.Y) , 52, 80);
 
-            SplashKit.DrawRectangle(Color.Red, _rectUp.X, _rectUp.Y, _rectUp.Width, _rectUp.Height);
-            SplashKit.DrawRectangle(Color.Green, _rectDown.X, _rectDown.Y, _rectDown.Width, _rectDown.Height);
-            SplashKit.DrawRectangle(Color.Blue, _rectLeft.X, _rectLeft.Y, _rectLeft.Width, _rectLeft.Height);
-            SplashKit.DrawRectangle(Color.Yellow, _rectRight.X, _rectRight.Y, _rectRight.Width, _rectRight.Height);
-            SplashKit.DrawRectangle(Color.Purple, _hitbox.X, _hitbox.Y, _hitbox.Width, _hitbox.Height);
         }
         public Rectangle getHitbox()
         {
@@ -224,7 +219,7 @@ namespace CustomMario
             ducked = false;
             moving = false;
             setHitbox();
-            debugLocation();
+  
  
             //set current pose for character 
             if (!moving && !onAir(rects) && !ducked)       //if not ducking, moving and not mid-air then idle pose

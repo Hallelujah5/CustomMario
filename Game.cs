@@ -47,7 +47,7 @@ namespace CustomMario
         public void Load()
         {
             map = new DrawMap();
-            player = new Mario(10750, -250);
+            player = new Mario(50, 50);
             bgImage = new Bitmap("Bg", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\background2.png");
 
             _point = new Point2D();
