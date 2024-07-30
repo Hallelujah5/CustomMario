@@ -8,6 +8,8 @@ using SplashKitSDK;
 using Rectangle = System.Drawing.Rectangle;
 using System.Threading;
 using System.Diagnostics;
+using System.Collections;
+using System.Security.Cryptography;
 
 namespace CustomMario
 {
@@ -28,15 +30,19 @@ namespace CustomMario
         Font font;
         int lives, countdownTimer, _lifeUpdate, totalCoins, _coinAdd;
         SplashKitSDK.Timer gameTimer;
-        Goomba _goomba1, _goomba2, _goomba3, _goomba4, _goomba5, _goomba6, _goomba7, _goomba8, _goomba9;
-        bool m1, m2, m3, m4;
+        Goomba _goomba9, _goomba1, _goomba2;
+        Coin coin1, coin2, coin3, coin4, coin5, coin6;
+        bool m0,m1, m2, m3, m4, m5, m6,m7,m8,m9, m10;
         GC_List _gcList;
         bool _pause;
         bool _victory;
         bool _courseEnded;
         SoundEffect VictorySFX, LifeLostSFX, powerUpAppearSFX;
         bool _dies;
-        Coin coin1,coin2,coin3,coin4,coin5,coin6, coin7, coin8, coin9, coin10, coin11, coin12, coin13, coin14, coin15, coin16, coin17, coin18, coin19, coin20;
+        coinList _coinList;
+        GoombaList _goombaList;
+        double[,] coinPositions, goombaPositions;
+
 
         public void Load()
         {
@@ -50,6 +56,8 @@ namespace CustomMario
             Time = new Bitmap("Time", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\TimeSprite2.png");
             Coin = new Bitmap("Coin", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\HUDCoinSprite4.png");
 
+            _coinList = new coinList();
+            _goombaList = new GoombaList();
 
             SplashKit.PlaySoundEffect(_bgMusic, -1); // -1 loops indefinitely
             font = SplashKit.LoadFont("Arial", "F:\\Projects\\repo\\CustomMario\\Resources\\fonts\\ARIALBD.TTF");
@@ -65,79 +73,54 @@ namespace CustomMario
             countdownTimer = 100;
             gameTimer = SplashKit.CreateTimer("Timer");
             SplashKit.StartTimer(gameTimer);
+            _gcList = new GC_List();
+
+            coin1 = new Coin(58.05, 0);
+            coin2 = new Coin(73, 0);
+            coin3 = new Coin(116, -320);
+            coin4 = new Coin(184,-506);
+            coin5 = new Coin(185, -506);
+            coin6 = new Coin(186, -506);
+
+
+            coinPositions = new double[,]
+            {
+                {32, 560}, {29, 560}, {30, 560}, {31, 560}, {35, 150},              //Y 560 is ground level
+                {36, 75}, {37, 0}, {38, -20}, {59, 560}, {56, 560},
+                {57, 560}, {58, 560}, {73, 560}, {71, 560}, {72, 560}, {73, -300},
+                {102, 310},{103, 310} , {72.05, 0}, {108, 560}, {112, 560}, {111, 560},{109, 560}, {110, 560},
+                {140, 560},{141, 560}, {138, 560}, {139, 560},    {149.4, 265}, {150.1, 210}, {151, 170}, {152, 150},
+                {193.2, 185}, {194, 155}, {194.8, 185}
+
+            };
+            _coinList.InitializeCoins(coinPositions);
+            _gcList.AddCoins(_coinList.getCoinList());
+
+
 
 
             //enemies initialization
-
-            _gcList = new GC_List();
-
-            _goomba1 = new Goomba(10, 560);
-            _goomba2 = new Goomba(17, 560);
-            _goomba3 = new Goomba(160, 560);
-            _goomba4 = new Goomba(44, 560);
-            _goomba5 = new Goomba(52, 560);
-            _goomba6 = new Goomba(86, 560);
-            _goomba7 = new Goomba(112, 560);
-            _goomba8 = new Goomba(135, 560);
+            goombaPositions = new double[,]
+            {
+                {10, 560}, {17, 560}, {160, 560}, {44, 560}, {52, 560},
+                {86, 560}, {112, 560}, {135, 560}, {73, 560}
+            };  
+            _goombaList.InitializeGoombas(goombaPositions);
+            _gcList.AddGoombas(_goombaList.GetGoombas());
             _goomba9 = new Goomba(73, 560);
-
-            _gcList.Add(_goomba1);
-            _gcList.Add(_goomba2);
-            _gcList.Add(_goomba3);
-            _gcList.Add(_goomba4);
-            _gcList.Add(_goomba5);
-            _gcList.Add(_goomba6);
-            _gcList.Add(_goomba7);
-            _gcList.Add(_goomba8);
-
-
-            coin2 = new Coin(32, 560);          //Y 560 is the ground level
-            coin3 = new Coin(29, 560);
-            coin4 = new Coin(30, 560);
-            coin5 = new Coin(31, 560);
-
-            coin6 = new Coin(35, 150);
-            coin7 = new Coin(36, 75);
-            coin8 = new Coin(37, 0);
-            coin9 = new Coin(38, -20);
-
-
-            coin10 = new Coin(59, 560);
-            coin11 = new Coin(56, 560);
-            coin12 = new Coin(57, 560);
-            coin13 = new Coin(58, 560);
-
-            coin14 = new Coin(73, 560);
-            coin15 = new Coin(71, 560);
-            coin16 = new Coin(72, 560);
-
-            coin17 = new Coin(73, -6);
-            coin18 = new Coin(72, -6);
-
-         
-            _gcList.Add(coin2);
-            _gcList.Add(coin3);
-            _gcList.Add(coin4);
-            _gcList.Add(coin5);
-            _gcList.Add(coin6);
-            _gcList.Add(coin7);
-            _gcList.Add(coin8);
-            _gcList.Add(coin9);
-            _gcList.Add(coin10);
-            _gcList.Add(coin11);
-            _gcList.Add(coin12);
-            _gcList.Add(coin13);
-            _gcList.Add(coin14);
-            _gcList.Add(coin15);
-            _gcList.Add(coin16);
-            _gcList.Add(coin17);
-            _gcList.Add(coin18);
-
+            _goomba1 = new Goomba(41.6, 280);
+            _goomba2 = new Goomba(112, -55);
 
             m1 = false;
             m2 = false;
             m3 = false;
             m4 = false;
+            m5 = false;
+            m6 = false;
+            m7 = false;
+            m8 = false;
+            m9 = false;
+            m10 = false;
 
             _loaded = true;
             _courseEnded = false;
@@ -216,6 +199,7 @@ namespace CustomMario
                 _gcList.Draw(_rects, Mario_hitbox, Mario_rectDown, ref lives);         //Game character AI
                 _lifeUpdate = _gcList.Lives(_rects, Mario_hitbox, Mario_rectDown, ref lives);
                 _coinAdd = _gcList.Coins(Mario_hitbox);
+
                 if (Mario_location.X > 4275) { _goomba9.Moving(_rects, Mario_hitbox, Mario_rectDown, lives); }
                 lives += _lifeUpdate;
                 totalCoins += _coinAdd;
@@ -266,37 +250,80 @@ namespace CustomMario
 
                 QuestionBlock collidedBlock = player.collideActiveBlocks_block(QB_obj, Mario_hitbox);
                 Mushroom mushroom = null;
+              
                 if (collidedBlock != null)
                 {
                     Console.WriteLine("Collision with an active block detected.");
 
-                    usedBlock newBlock = new usedBlock(collidedBlock.Rect().X, collidedBlock.Rect().Y);
                     int index = player.CollideActiveBlocks_index(_mapObj, Mario_hitbox);
                     Console.WriteLine(index);
-                    mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - newBlock.Rect().Height);
-                    if (index == 0 && !m1)
+                    mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - collidedBlock.Rect().Height);
+              
+
+                    if (index == 0 && !m0)             //mushroom
+                    {
+                        m0 = true;
+                        SplashKit.PlaySoundEffect(powerUpAppearSFX);
+                        _gcList.Add(mushroom);
+             
+                    }
+                    else if (index == 1 && !m1)                    //goomba
                     {
                         m1 = true;
-                        SplashKit.PlaySoundEffect(powerUpAppearSFX);
-                        _gcList.Add(mushroom);
+                        _gcList.Add(_goomba1);
                     }
-                    else if (index == 3 && !m2)
+                    else if (index == 2 && !m2)
                     {
                         m2 = true;
-                        SplashKit.PlaySoundEffect(powerUpAppearSFX);
-                        _gcList.Add(mushroom);
+                        _gcList.Add(coin1);
                     }
-                    else if (index == 9 && !m3)
+                    else if (index == 3 && !m3)
                     {
                         m3 = true;
-                        SplashKit.PlaySoundEffect(powerUpAppearSFX);
-                        _gcList.Add(mushroom);
+                        _gcList.Add(coin2);
                     }
-                    else if (index == 10 && !m4)
+                    else if (index == 4 && !m4)             //mushroom
                     {
                         m4 = true;
                         SplashKit.PlaySoundEffect(powerUpAppearSFX);
                         _gcList.Add(mushroom);
+
+                    }
+                    else if (index == 5 && !m5)
+                    {
+                        m5 = true;
+                        _gcList.Add(coin3);
+                    }
+                    else if (index == 6 && !m6)                 //goomba
+                    {
+                        m6 = true;
+                        _gcList.Add(_goomba2);
+
+                    }
+                    else if (index == 7 && !m7)             //mushroom
+                    {
+                        m7 = true;
+                        SplashKit.PlaySoundEffect(powerUpAppearSFX);    
+                        _gcList.Add(mushroom);
+            
+                    }
+                    else if (index == 8 && !m8)
+                    {
+                        m8 = true;
+                        _gcList.Add(coin4);
+
+                    }
+                    else if (index == 9 && !m9)
+                    {
+                        m9 = true;
+                        _gcList.Add(coin5);
+
+                    }
+                    else if (index == 10 && !m10)
+                    {
+                        m10 = true;
+                        _gcList.Add(coin6);
+
                     }
 
                     //for (int i = 0; i < _gcList.Count; i++)
@@ -309,7 +336,8 @@ namespace CustomMario
                     //    }
                     //}
                 }
-               
+
+              
 
 
                 // Update the window display

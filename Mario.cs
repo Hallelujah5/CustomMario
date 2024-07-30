@@ -11,17 +11,12 @@ namespace CustomMario
     public class Mario
     {
         Bitmap mIdle, mJump, mMoving, mDuck, mDie, mVictory,currentPose;
-        //private Sprite _player;
+  
         private const int Xspeed = 11;
         private Point2D _location;
         bool _facingRight = true;
 
-        Mushroom mr1;
-        List<Rectangle> rects;
         SoundEffect _jumpUp;
-        SoundEffect coinCollect;
-        SoundEffect enemyDmg;
-        SoundEffect up1;
 
         public Mario(double x, double y)
         {
@@ -37,12 +32,7 @@ namespace CustomMario
             //SFX
             _jumpUp = SplashKit.LoadSoundEffect("SFXup", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXJump.mp3");
 
-            ////animation script
-            //mMoving.SetCellDetails(mMoving.Width / 2, mMoving.Height / 2, 2, 2, 4);
-            //AnimationScript walkingScript = SplashKit.LoadAnimationScript("WalkingScript", "walkingScript.txt");
-            //_player = SplashKit.CreateSprite(mMoving, walkingScript);
-
-
+    
             currentPose = mIdle;
             //_player.StartAnimation(0);
             _location.X = x;
@@ -54,10 +44,6 @@ namespace CustomMario
 
         }
 
-        //public void Draw()
-        //{
-        //    _player.Draw(100, 500);
-        //}
 
 
         public Point2D getLocation()
@@ -67,7 +53,7 @@ namespace CustomMario
 
         public void debugLocation()
         {
-            SplashKit.DrawText("X: " + _location.X/75, Color.Black, _location.X +10, _location.Y -30);
+            SplashKit.DrawText("X: " + _location.X/60, Color.Black, _location.X +10, _location.Y -30);
             SplashKit.DrawText("Y: " + _location.Y, Color.Black, _location.X +10, _location.Y -20);
             SplashKit.DrawText("Yvelocity: " + yVelocity, Color.Black, _location.X + 10, _location.Y - 10);
         }
@@ -94,11 +80,6 @@ namespace CustomMario
 
             _hitbox = new Rectangle(Convert.ToInt32(_location.X) + 10, Convert.ToInt32(_location.Y) , 52, 80);
 
-            SplashKit.DrawRectangle(Color.Red, _rectUp.X, _rectUp.Y, _rectUp.Width, _rectUp.Height);
-            SplashKit.DrawRectangle(Color.Green, _rectDown.X, _rectDown.Y, _rectDown.Width, _rectDown.Height);
-            SplashKit.DrawRectangle(Color.Blue, _rectLeft.X, _rectLeft.Y, _rectLeft.Width, _rectLeft.Height);
-            SplashKit.DrawRectangle(Color.Yellow, _rectRight.X, _rectRight.Y, _rectRight.Width, _rectRight.Height);
-            SplashKit.DrawRectangle(Color.Purple, _hitbox.X, _hitbox.Y, _hitbox.Width, _hitbox.Height);
         }
         public Rectangle getHitbox()
         {
@@ -226,7 +207,6 @@ namespace CustomMario
         private float xVelocity = 0;        //represents the horizontal velocity while airborne
 
         private bool airRight = true;       //faces right while mid-air
-        private bool onGround = false;     //false by default 
 
         bool moving ;
         bool ducked;
@@ -239,64 +219,9 @@ namespace CustomMario
             ducked = false;
             moving = false;
             setHitbox();
-            debugLocation();
-            //Idle when not jump, not duck, not moving A D
-            //Show running animation when A D
-
-
-            //if (!SplashKit.KeyDown(KeyCode.WKey) && !(SplashKit.KeyDown(KeyCode.SKey)) )
-            //{
-
-            //}  
-
-            //if (collideActiveBlocks(QB_rects, _hitbox))
-            //{
-            //    Console.WriteLine("collision with an active block detected.");
-            //}
-
-
-
-
-
-            //QuestionBlock collidedBlock = collideActiveBlocks_block(QB_objs, _hitbox);
-            //if (collidedBlock != null)
-            //{
-            //    Console.WriteLine("Collision with an active block detected.");
-
-            //    usedBlock newBlock = new usedBlock(collidedBlock.Rect().X, collidedBlock.Rect().Y);
-        
-            //    int index = CollideActiveBlocks_index(QB_rects, _hitbox);        //index of collided block
-            //    if (index != -1)
-            //    {
-            //        QB_objs[index] = newBlock;
-            //    }
-                
-            //    QB_objs.Remove(collidedBlock);                                                          
-            //    QB_objs.Add(newBlock);
-            //    //Mushroom mushroom = new Mushroom(collidedBlock.Rect().X, collidedBlock.Rect().Y - newBlock.Rect().Height);
-            //    //mushroom.Moving(rects, _hitbox, _rectDown);
-            //}
-
-
-
-
-
-
-            //if (SplashKit.KeyDown(KeyCode.WKey) && (SplashKit.KeyDown(KeyCode.SKey)))
-            //{
-            //    Console.WriteLine("Drawing idle");
-            //    Draw(currentPose, _facingRight);
-            //}
-            //else
-            //{
-            //    if (SplashKit.KeyDown(KeyCode.AKey)) { _player.StartAnimation("WalkLeft"); }
-            //    if (SplashKit.KeyDown(KeyCode.DKey)) { _player.StartAnimation("WalkRight"); }
-            //}
-
-
-
+  
+ 
             //set current pose for character 
-
             if (!moving && !onAir(rects) && !ducked)       //if not ducking, moving and not mid-air then idle pose
             {
                 currentPose = mIdle;        
@@ -394,7 +319,6 @@ namespace CustomMario
                 }
                 
             }   
-
 
 
             //Duck
