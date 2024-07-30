@@ -53,7 +53,7 @@ namespace CustomMario
 
         public void debugLocation()
         {
-            SplashKit.DrawText("X: " + _location.X/75, Color.Black, _location.X +10, _location.Y -30);
+            SplashKit.DrawText("X: " + _location.X/60, Color.Black, _location.X +10, _location.Y -30);
             SplashKit.DrawText("Y: " + _location.Y, Color.Black, _location.X +10, _location.Y -20);
             SplashKit.DrawText("Yvelocity: " + yVelocity, Color.Black, _location.X + 10, _location.Y - 10);
         }

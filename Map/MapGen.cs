@@ -129,7 +129,7 @@ namespace CustomMario.Map
                     map.Add(block);
                     map.QB_Add(block);
                 }
-                if ( i == 108 || i == 109 || i == 110 || i == 111)
+                if ( i == 108 )
                 {
                     QuestionBlock block3 = new QuestionBlock(60 * i, -190);
                     map.Add(block3);
@@ -150,7 +150,11 @@ namespace CustomMario.Map
 
 
 
-
+                if (i == 109 || i == 110 || i == 111)
+                {
+                    usedBlock block3 = new usedBlock(60 * i, -190);
+                    map.Add(block3);
+                }
 
                 //Used block
                 if (i == 30 || i == 32 || i == 33 || i == 56 || i == 57 || i == 58 || i == 59 ||

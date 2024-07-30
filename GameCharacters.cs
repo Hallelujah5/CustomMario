@@ -42,7 +42,13 @@ namespace CustomMario
             }
         }
 
-
+        public void AddCoins(List<Coin> coinList)
+        {
+            foreach (var coin in coinList)
+            {
+                Add(coin);
+            }
+        }
 
 
         public List<GameCharacter> Get_gcList()
@@ -56,6 +62,7 @@ namespace CustomMario
                 GameCharacter _entity = _gcList[i];
                 _entity.Moving(rects, Mario_hitbox, Mario_rectDown, lives);
             }
+   
         }
         public int Lives(List<Rectangle> rects, Rectangle Mario_hitbox, Rectangle Mario_rectDown, ref int lives)        //uses collision checks to minus or add a life
         {
@@ -286,7 +293,7 @@ namespace CustomMario
         public override void Moving(List<Rectangle> rects, Rectangle Mario_hitbox, Rectangle mario_rectDown, int lives)
         {
             setHitbox();
-            debugLocation();
+  
 
             if (_movingRight)                       //Patrolling behaviour
             {
@@ -444,7 +451,7 @@ namespace CustomMario
         public override void Moving(List<Rectangle> rects, Rectangle Mario_hitbox, Rectangle mario_rectDown, int lives)
         {
             setHitbox();
-            debugLocation();
+
 
             if (_movingRight)                       //Patrolling behaviour
             {
@@ -477,7 +484,7 @@ namespace CustomMario
             if (yVelocity >= 0 && onAir(rects))
             {
                 moving = true;
-                yVelocity += gravityVlc;            //faster falling speed as the player is falling 
+                yVelocity += gravityVlc;            //faster falling speed while falling 
 
                 if (Math.Abs(yVelocity) > 30)
                 {
@@ -547,6 +554,19 @@ namespace CustomMario
         {
             return _coinList;
         }
+        public void InitializeCoins(double[,] positions)
+        {
+            for (int i = 0; i < positions.GetLength(0); i++)
+            {
+                double x = positions[i, 0];
+                double y = positions[i, 1];
+                _coinList.Add(new Coin(x, y));
+            }
+        }
+
+
+
+
 
         public int Draw(Rectangle Mario_hitbox)
         {
