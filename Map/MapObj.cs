@@ -22,7 +22,7 @@ namespace CustomMario.Map
 
         public GrassBlock(double x, double y)               
         {
-            _tile = new Bitmap("GrassTile", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\grassblock.png");
+            _tile = new Bitmap("GrassTile", "Resources\\images\\grassblock.png");
             _pt.X = x;
             _pt.Y = y;
             _rect = new Rectangle(Convert.ToInt32(_pt.X), Convert.ToInt32(_pt.Y), _tile.Height, _tile.Height);
@@ -52,7 +52,7 @@ namespace CustomMario.Map
 
         public QuestionBlock(double x, double y)
         {
-            block = new Bitmap("QuestionBlock", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\questionblock3.png");
+            block = new Bitmap("QuestionBlock", "Resources\\images\\questionblock3.png");
             _pt.X = x;
             _pt.Y = y;
             _rect = new Rectangle(Convert.ToInt32(_pt.X), Convert.ToInt32(_pt.Y), block.Width, block.Height);
@@ -93,7 +93,7 @@ namespace CustomMario.Map
 
         public usedBlock(double x, double y)
         {
-            block = new Bitmap("usedBlock", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\usedblock2.png");
+            block = new Bitmap("usedBlock", "Resources\\images\\usedblock2.png");
             _pt.X = x;
             _pt.Y = y;
             _rect = new Rectangle(Convert.ToInt32(_pt.X), Convert.ToInt32(_pt.Y), block.Width, block.Height);
@@ -142,7 +142,7 @@ namespace CustomMario.Map
         Rectangle _rect;
         public Pipe(double x, double y) 
         {
-            _pipe = new Bitmap("Pipe", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\pipe2.png");
+            _pipe = new Bitmap("Pipe", "Resources\\images\\pipe2.png");
             _pt.X = x;
             _pt.Y = y;
             _rect = new Rectangle(Convert.ToInt32(_pt.X), Convert.ToInt32(_pt.Y), _pipe.Width, _pipe.Height);
@@ -161,7 +161,7 @@ namespace CustomMario.Map
         Rectangle _rect;
         public miniPipe(double x, double y)
         {
-            _pipe = new Bitmap("MiniPipe", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\pipe_mini.png");
+            _pipe = new Bitmap("MiniPipe", "Resources\\images\\pipe_mini.png");
             _pt.X = x;
             _pt.Y = y;
             _rect = new Rectangle(Convert.ToInt32(_pt.X), Convert.ToInt32(_pt.Y), _pipe.Width, _pipe.Height);
@@ -184,7 +184,7 @@ namespace CustomMario.Map
         Rectangle _rect;
         public Stone(double x, double y)
         {
-            stone = new Bitmap("Stone", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\stoneBlock.png");
+            stone = new Bitmap("Stone", "Resources\\images\\stoneBlock.png");
             _pt.X = x;
             _pt.Y = y;
             _rect = new Rectangle(Convert.ToInt32(_pt.X), Convert.ToInt32(_pt.Y), stone.Width, stone.Height);
@@ -205,7 +205,7 @@ namespace CustomMario.Map
         Bitmap _bush;
         public Bush(double x, double y) 
         {
-            _bush = new Bitmap("Bush", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\bush11.png");
+            _bush = new Bitmap("Bush", "Resources\\images\\bush11.png");
             _bush.Draw(x, y);
         }
     }
@@ -214,7 +214,7 @@ namespace CustomMario.Map
         Bitmap _bush;
         public Bush2(double x, double y)
         {
-            _bush = new Bitmap("Bush2", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\bush22.png");
+            _bush = new Bitmap("Bush2", "Resources\\images\\bush22.png");
             _bush.Draw(x, y);
         }
     }
@@ -224,7 +224,7 @@ namespace CustomMario.Map
         Bitmap _castle;
         public Castle(double x, double y) 
         {
-            _castle = new Bitmap("Castle", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\castle2.png");
+            _castle = new Bitmap("Castle", "Resources\\images\\castle2.png");
             _castle.Draw(x, y);
         }
     }

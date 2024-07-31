@@ -21,8 +21,8 @@ namespace CustomMario
         public GC_List()
         {
             _gcList = new List<GameCharacter>();
-            SFXGoomba = SplashKit.LoadSoundEffect("GoombaDies", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXgoomba.mp3");
-            SFXGoombaHit = SplashKit.LoadSoundEffect("GoombaHit", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXGoombaHit.mp3");
+            SFXGoomba = SplashKit.LoadSoundEffect("GoombaDies", "Resources\\SFX\\SFXgoomba.mp3");
+            SFXGoombaHit = SplashKit.LoadSoundEffect("GoombaHit", "Resources\\SFX\\SFXGoombaHit.mp3");
         }
 
         public void Add(GameCharacter _entity)
@@ -192,8 +192,8 @@ namespace CustomMario
         public GoombaList()
         {
             _goombaList = new List<Goomba>();
-            _sfxGoomba = SplashKit.LoadSoundEffect("GoombaDies", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXgoomba.mp3");
-            _sfxGoombaHit = SplashKit.LoadSoundEffect("GoombaHit", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXGoombaHit.mp3");
+            _sfxGoomba = SplashKit.LoadSoundEffect("GoombaDies", "Resources\\SFX\\SFXgoomba.mp3");
+            _sfxGoombaHit = SplashKit.LoadSoundEffect("GoombaHit", "Resources\\SFX\\SFXGoombaHit.mp3");
         }
         
         public void InitializeGoombas(double[,] positions)
@@ -229,7 +229,7 @@ namespace CustomMario
 
         public Goomba(double x, double y)
         {
-            _moving = new Bitmap("goombaMove", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\goomba.png");
+            _moving = new Bitmap("goombaMove", "Resources\\images\\goomba.png");
 
             _location.X = x * 75;
             _location.Y = y;
@@ -397,10 +397,10 @@ namespace CustomMario
 
         public Mushroom(double x, double y)
         {
-            mushroom = new Bitmap("mushroom", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\mushroom2.png");
+            mushroom = new Bitmap("mushroom", "Resources\\images\\mushroom2.png");
             _location.X = x;
             _location.Y = y;
-            _1up = SplashKit.LoadSoundEffect("1Up", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFX1up.mp3");
+            _1up = SplashKit.LoadSoundEffect("1Up", "Resources\\SFX\\SFX1up.mp3");
         }
 
 
@@ -605,10 +605,10 @@ namespace CustomMario
 
         public Coin(double x, double y)
         {
-            _coin = new Bitmap("Coinsss", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\coin4.png");
+            _coin = new Bitmap("Coinsss", "Resources\\images\\coin4.png");
             _location.X = x * 60;
             _location.Y = y;
-            coinSFX = SplashKit.LoadSoundEffect("Coin", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXcoin.mp3");
+            coinSFX = SplashKit.LoadSoundEffect("Coin", "Resources\\SFX\\SFXcoin.mp3");
         }
 
 

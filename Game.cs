@@ -48,25 +48,25 @@ namespace CustomMario
         {
             map = new DrawMap();
             player = new Mario(50, 50);
-            bgImage = new Bitmap("Bg", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\background2.png");
+            bgImage = new Bitmap("Bg", "Resources\\images\\background2.png");
 
             _point = new Point2D();
-            _bgMusic = SplashKit.LoadSoundEffect("BackgroundMusic", "F:\\Projects\\repo\\CustomMario\\Resources\\music\\Overworld.mp3");
-            HUDmario = new Bitmap("MarioHUD", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\HUDMario2.png");
-            Time = new Bitmap("Time", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\TimeSprite2.png");
-            Coin = new Bitmap("Coin", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\HUDCoinSprite4.png");
+            _bgMusic = SplashKit.LoadSoundEffect("BackgroundMusic", "Resources\\music\\Overworld.mp3");
+            HUDmario = new Bitmap("MarioHUD", "Resources\\images\\HUDMario2.png");
+            Time = new Bitmap("Time", "Resources\\images\\TimeSprite2.png");
+            Coin = new Bitmap("Coin", "Resources\\images\\HUDCoinSprite4.png");
 
             _coinList = new coinList();
             _goombaList = new GoombaList();
 
             SplashKit.PlaySoundEffect(_bgMusic, -1); // -1 loops indefinitely
-            font = SplashKit.LoadFont("Arial", "F:\\Projects\\repo\\CustomMario\\Resources\\fonts\\ARIALBD.TTF");
+            font = SplashKit.LoadFont("Arial", "Resources\\fonts\\ARIALBD.TTF");
 
 
             //SFX
-            VictorySFX = SplashKit.LoadSoundEffect("Victory", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\clearcourse.mp3");
-            LifeLostSFX = SplashKit.LoadSoundEffect("GameOver", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\lifelost.mp3");
-            powerUpAppearSFX = SplashKit.LoadSoundEffect("PowerUpAppear", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFX1upAppear.mp3");
+            VictorySFX = SplashKit.LoadSoundEffect("Victory", "Resources\\SFX\\clearcourse.mp3");
+            LifeLostSFX = SplashKit.LoadSoundEffect("GameOver", "Resources\\SFX\\lifelost.mp3");
+            powerUpAppearSFX = SplashKit.LoadSoundEffect("PowerUpAppear", "Resources\\SFX\\SFX1upAppear.mp3");
 
             lives = 1;
             totalCoins = 0;
