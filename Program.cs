@@ -11,7 +11,7 @@ namespace CustomMario
     {
         public static void Main()
         {
-            Window TestWin = new Window("Mario Testing", 1200, 800);
+            Window TestWin = new Window("Mario Window", 1200, 800);
             bool choice = false;
             Game newGame = new Game();
             Menu newMenu = new Menu();  

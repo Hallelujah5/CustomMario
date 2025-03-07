@@ -21,16 +21,16 @@ namespace CustomMario
         public Mario(double x, double y)
         {
             //Movements
-            mDuck = SplashKit.LoadBitmap("Duck", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Duckin4.png");          //64x86
-            mIdle = SplashKit.LoadBitmap("Idle", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Idlingfinal.png");     //77x86
-            mJump = SplashKit.LoadBitmap("Jump", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Jumpinfinal4.png");   //85x92
-            mMoving = SplashKit.LoadBitmap("Mario", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\Walk9.png");      //64x82
-            mVictory = SplashKit.LoadBitmap("victoryPose", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\victory4.png");    //65x86
-            mDie = SplashKit.LoadBitmap("diePose", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\die2.png");     //58x87
+            mDuck = SplashKit.LoadBitmap("Duck", "Resources\\images\\Duckin4.png");          //64x86
+            mIdle = SplashKit.LoadBitmap("Idle", "Resources\\images\\Idlingfinal.png");     //77x86
+            mJump = SplashKit.LoadBitmap("Jump", "Resources\\images\\Jumpinfinal4.png");   //85x92
+            mMoving = SplashKit.LoadBitmap("Mario", "Resources\\images\\Walk9.png");      //64x82
+            mVictory = SplashKit.LoadBitmap("victoryPose", "Resources\\images\\victory4.png");    //65x86
+            mDie = SplashKit.LoadBitmap("diePose", "Resources\\images\\die2.png");     //58x87
 
 
             //SFX
-            _jumpUp = SplashKit.LoadSoundEffect("SFXup", "F:\\Projects\\repo\\CustomMario\\Resources\\SFX\\SFXJump.mp3");
+            _jumpUp = SplashKit.LoadSoundEffect("SFXup", "Resources\\SFX\\SFXJump.mp3");
 
     
             currentPose = mIdle;
@@ -79,6 +79,9 @@ namespace CustomMario
             //should be handled after genmap.cs
 
             _hitbox = new Rectangle(Convert.ToInt32(_location.X) + 10, Convert.ToInt32(_location.Y) , 52, 80);
+
+
+
 
         }
         public Rectangle getHitbox()

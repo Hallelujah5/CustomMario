@@ -19,14 +19,14 @@ namespace CustomMario
         Font font;
         public Menu()
         {
-            font = SplashKit.LoadFont("Arial", "F:\\Projects\\repo\\CustomMario\\Resources\\fonts\\ARIALBD.TTF");
+            font = SplashKit.LoadFont("Arial", "Resources\\fonts\\ARIALBD.TTF");
 
-            bgImage = new Bitmap("Background", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\background2.png");
-            logo = new Bitmap("Logo", "F:\\Projects\\repo\\CustomMario\\Resources\\images\\gamelogo5.png");
+            bgImage = new Bitmap("Background", "Resources\\images\\background2.png");
+            logo = new Bitmap("Logo", "Resources\\images\\gamelogo5.png");
 
             _point = new Point2D();
 
-            menuMusic = SplashKit.LoadSoundEffect("Plains", "F:\\Projects\\repo\\CustomMario\\Resources\\music\\Plains2.mp3");
+            menuMusic = SplashKit.LoadSoundEffect("Plains", "Resources\\music\\Plains2.mp3");
 
             map = new DrawMap();
         }
