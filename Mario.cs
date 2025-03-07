@@ -80,6 +80,9 @@ namespace CustomMario
 
             _hitbox = new Rectangle(Convert.ToInt32(_location.X) + 10, Convert.ToInt32(_location.Y) , 52, 80);
 
+
+
+
         }
         public Rectangle getHitbox()
         {
